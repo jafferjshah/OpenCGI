@@ -1,1 +1,1 @@
-Files of EasyShare, a project for supporting facilitators share session materials.
+Files of EasyShare, a project for supporting facilitators share session materials. Worked by 5 members.
