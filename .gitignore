@@ -1,2 +1,14 @@
+#Ignored Folders & Files
+
+#The eclipse build folder
+build/
+bin/
+
+#The eclipse .settings folder
+.settings/
+
+#The eclipse .classpath file
 .classpath
+
+#The eclipse .project file
 .project
