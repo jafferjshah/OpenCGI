@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #Ignored Folders & Files
 
 #The eclipse build folder
@@ -11,4 +12,7 @@ bin/
 .classpath
 
 #The eclipse .project file
+=======
+.classpath
+>>>>>>> Internet/master
 .project
