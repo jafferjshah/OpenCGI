@@ -2,6 +2,7 @@
 
 #The eclipse build folder
 build/
+bin/
 
 #The eclipse .settings folder
 .settings/
