@@ -2,7 +2,7 @@ package com.cgi.open.easyshare.model;
 
 /**
  * The Admin user
- * @author Jaffer J Shah
+ * @author Sanjana Bayya
  *
  */
 public class Admin extends User {
