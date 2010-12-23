@@ -12,7 +12,4 @@ bin/
 .classpath
 
 #The eclipse .project file
-=======
-.classpath
->>>>>>> Internet/master
 .project
