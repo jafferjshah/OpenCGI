@@ -1,4 +1,4 @@
-package com.cgi.open.easyshare.model;
+package com.cgi.open.EasyShare.model;
 
 /**
  * The class Appointment represents time units (day wise) of a particular event. It has
@@ -7,6 +7,10 @@ package com.cgi.open.easyshare.model;
  * do the verification.
  */
 public class Appointment {
+	/**
+	 * uniquely identifies an appointment if a session
+	 */
+	private Integer appointmentId;
 	/**
 	 * The day of the session. Should be represented in the format:
 	 * mm/dd/yyyy.
@@ -48,6 +52,21 @@ public class Appointment {
 	 */
 	public Integer getDurationInMinutes() {
 		return (getTimeInMinutes(getToTime()) - getTimeInMinutes(getFromTime()));
+	}
+	/**
+	 * Get appointment id
+	 * @return appointmentId
+	 */
+	public Integer getAppointmentId() {
+		return appointmentId;
+	}
+
+	/**
+	 * Set appointment id
+	 * @param appointmentId
+	 */
+	public void setAppointmentId(Integer appointmentId) {
+		this.appointmentId = appointmentId;
 	}
 
 	/**
@@ -185,11 +204,11 @@ public class Appointment {
 				(31 * this.getToTime().hashCode());
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Appointment a = new Appointment();
 		a.setDate("12/12/2010");
 		a.setFromTime("1230");
 		a.setToTime("1420");
 		System.out.println(a.getDurationInMinutes());
-	}
+	}*/
 }
