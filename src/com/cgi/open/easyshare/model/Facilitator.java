@@ -1,4 +1,4 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
 
 /**

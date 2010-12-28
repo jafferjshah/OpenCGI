@@ -1,11 +1,12 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
 import java.util.*;
 
 
 /**
  * Message class represents the communication object of the system.
- * Attendees,Facilitators,Admin can post messages to communicate with each other.
+ * Any type of the user (Attendees,Facilitators,Admin) can post 
+ * messages to communicate with each other.
  * 
  *
  */
@@ -15,16 +16,19 @@ public class Message
 	/**
 	 * uniquely identifies a message
 	 */
+
 	private Integer messageId;
 	/**
 	 * The overview of the message communicated.
 	 *
 	 */
+	
 	private String subject;
 	/**
 	 * The actual message to be conveyed.
 	 *
 	 */
+	
 	private String text;
 	/**
 	 * The set of resources uploaded by the facilitator for the attendees,specific to a message.
@@ -32,10 +36,10 @@ public class Message
 	 * Resources are added to the message from the resource pool
 	 *
 	 */
+	
 	private Set<Resource> resources;
 	
-	public Message()
-	{
+	public Message() {
 		resources=new HashSet<Resource>();
 	}
 	/**
@@ -94,7 +98,7 @@ public class Message
 	 *
 	 *@return resources
 	 */
-	public Set<Resource> getResource() {
+	public Set<Resource> getResources() {
 		return resources;
 	}
 	
@@ -103,6 +107,7 @@ public class Message
 	 *
 	 *@param resource
 	 */
+
 	public void addResource(Resource resource) {
 		resources.add(resource);
 	}
@@ -112,22 +117,29 @@ public class Message
 	 * 
 	 * @return
 	 */
-	public String toString()
-	{
-		String ret;
-		ret="text:"+text+"\nResource:"+resources;
-		return ret;
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb
+			.append("#")
+			.append(getMessageId())
+			.append(": ")
+			.append(getSubject())
+			.append("\n")
+			.append(getText())
+			.append("\n")
+			.append(getResources())
+		;
+		return sb.toString();
 	}
 	
 	/**
 	 * hashCode implementation
 	 */
-	public int hashCode()
-	{
-		int hash=31*subject.hashCode()+31*text.hashCode()+31*resources.hashCode();
+	public int hashCode() {
+		int hash = 31 * getSubject().hashCode() + 
+					31 * getText().hashCode() + 
+					31 * getResources().hashCode();
 		hash=hash/101;
-		System.out.println(this + " hashCode called : " + hash);
-
 		return hash;
 	}
 	
@@ -135,8 +147,7 @@ public class Message
 	 * equals implementation
 	 */
 	
-	public boolean equals(Object obj)
-	{
+	public boolean equals(Object obj){
 		if(obj==null||!(obj instanceof Message))
 		{
 			return false;
@@ -144,7 +155,9 @@ public class Message
 		Message msgObj=(Message)obj;
 		System.out.println(this + " AND " + msgObj + " equals called");
 
-		return(this.subject.equals(msgObj.subject));
+		return(this.getSubject().equals(msgObj.getSubject()) 
+				&& this.getText().equals(msgObj.getText()) 
+				&& this.getResources().equals(msgObj.getResources()));
 	}
 
 }

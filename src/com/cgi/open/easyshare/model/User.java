@@ -1,26 +1,23 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
-public abstract class  User 
-{
-	
-	
+/**
+ * The User class. 
+ */
+public class User {
 	private String name;
 	private Integer empid;
 	private String email;
-	public String getName() 
-	{
+	private UserType userType;
+	public String getName() {
 		return name;
 	}
-	public void setName(String name) 
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
-	public String getEmail()
-	{
+	public String getEmail() {
 		return email;
 	}
-	public void setEmail(String email) 
-	{
+	public void setEmail(String email) {
 		this.email = email;
 	}
 	public int getEmpid() {
@@ -29,30 +26,37 @@ public abstract class  User
 	public void setEmpid(int empid) {
 		this.empid = empid;
 	}
-	
-	public String toString()
-	{
-		String ret;
-		ret="\nemployee id:"+empid+"\nname:"+name+"\nemail"+email;
-		return ret;
+	public UserType getUserType() {
+		return userType;
 	}
-	
-	public int hashCode()
-	{
-		int hash=empid.hashCode();
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb
+			.append(getUserType())
+			.append(": ")
+			.append(getName())
+			.append(" (")
+			.append(getEmpid())
+			.append("-")
+			.append(getEmail())
+			.append(")")
+		;
+		return sb.toString();
+	}
+	public int hashCode() {
+		int hash = getEmail().hashCode();
 		System.out.println(this + " hashCode called : " + hash);
 		return hash;
 	}
-	
-	public boolean equals(Object obj)
-	{
-		if(obj==null||!(obj instanceof User))
-		{
+	public boolean equals(Object obj) {
+		if(obj==null||!(obj instanceof User)) {
 			return false;
 		}
 		User userObj=(User)obj;
 		System.out.println(this + " AND " + userObj + " equals called");
-		return(this.empid.equals(userObj.empid));
+		return(this.getEmail().equals(userObj.getEmail()));
 	}
-
 }

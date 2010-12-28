@@ -1,4 +1,4 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
 
 /**
@@ -8,16 +8,16 @@ package com.cgi.open.EasyShare.model;
 public class Resource
 {
 	/**
-	 * uniquely identifies a resource 
+	 * uniquely identifies a resource  (Mandatory) 
 	 */	
 	private Integer resourceId;
 	/**
-	 * The name of the resource
+	 * The name of the resource (Mandatory)
 	 *  
 	 */
 	private String resourceName;
 	/**
-	 * The url of the resource located on the server.
+	 * The url of the resource located on the server. (Mandatory)
 	 */
 	
 	private String url;
@@ -75,11 +75,18 @@ public class Resource
 	 * 
 	 * @return
 	 */	
-	public String toString()
-	{
-		String ret;
-		ret="\nURL:"+url+"\nResource Name:"+resourceName;
-		return ret;
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb
+			.append("#")
+			.append(getResourceId())
+			.append(": ")
+			.append(getResourceName())
+			.append(" (")
+			.append(getUrl())
+			.append(")")
+		;
+		return sb.toString();
 	}
 	
 	/**
@@ -87,9 +94,8 @@ public class Resource
 	 * 
 	 * @return 
 	 */
-	public int hashCode()
-	{
-		int hash=url.hashCode();
+	public int hashCode() {
+		int hash = getUrl().hashCode();
 		System.out.println(this + " hashCode called : " + hash);
 		return hash;
 	}
@@ -99,17 +105,14 @@ public class Resource
 	 * 
 	 * @return boolean
 	 */
-	
-	public boolean equals(Object obj)
-	{
-		if(obj==null||!(obj instanceof Resource))
-		{
+	public boolean equals(Object obj) {
+		if(obj==null||!(obj instanceof Resource)) {
 			return false;
 		}
 		Resource resObj=(Resource)obj;
 		System.out.println(this + " AND " + resObj + " equals called");
 
-		return(this.url.equals(resObj.url));
+		return(this.getUrl().equals(resObj.getUrl()));
 	}
 
 }

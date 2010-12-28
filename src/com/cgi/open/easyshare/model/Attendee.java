@@ -1,4 +1,4 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
 /**
  * Attendee class represents a user who attends the session.

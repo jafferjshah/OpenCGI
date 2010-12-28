@@ -1,4 +1,4 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,7 +53,8 @@ public class ResourcePool
 		Resource result = null;
 		for(
 				Iterator<Resource> it = set.iterator();
-				it.hasNext();) {
+				it.hasNext();
+			) {
 			result = it.next();
 			if(result.getResourceName() == name) {
 				break;
@@ -67,16 +68,17 @@ public class ResourcePool
 	 * 
 	 * @return
 	 */	
-	public String toString()
-	{
-		String resString=null;
-		for(Iterator<Resource> it = set.iterator();
-				it.hasNext();)
-		{
-			resString+="\t"+it.next();
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(Resource resource : getSet()) {
+			sb
+				.append(" (")
+				.append(resource)
+				.append(")")
+				.append("\n")
+			;
 		}
-		
-		return resString;
+		return sb.toString();
 	}
 	
 	/**
@@ -84,13 +86,10 @@ public class ResourcePool
 	 * 
 	 * @return 
 	 */
-	public int hashCode()
-	{
-		int hash=0;
-		for(Iterator<Resource> it = set.iterator();
-		it.hasNext();)
-		{
-			hash+=it.next().hashCode();
+	public int hashCode() {
+		int hash = 0;
+		for(Resource resource : getSet()) {
+			hash += resource.hashCode();
 		}
 		System.out.println(this + " hashCode called : " + hash);
 		return hash;
@@ -101,17 +100,14 @@ public class ResourcePool
 	 * 
 	 * @return boolean
 	 */
-	
-	public boolean equals(Object obj)
-	{
-		if(obj==null||!(obj instanceof ResourcePool))
-		{
+	public boolean equals(Object obj) {
+		if(obj==null||!(obj instanceof ResourcePool)) {
 			return false;
 		}
 		ResourcePool poolObj=(ResourcePool)obj;
 		System.out.println(this + " AND " + poolObj + " equals called");
 
-		return(this.set.equals(poolObj.set));
+		return(this.getSet().equals(poolObj.getSet()));
 	}
 	
 	

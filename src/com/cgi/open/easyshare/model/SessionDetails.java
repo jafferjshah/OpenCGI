@@ -1,4 +1,4 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -11,30 +11,10 @@ import java.util.Set;
  */
 public class SessionDetails {
 	/**
-	 * Name of the Session
-	 */
-	private String sessionName;
-	
-	/**
 	 * Holds the day wise schedule details of the session.
 	 */
 	private Set<Appointment> appointments;
 	
-	/**
-	 * Get session name
-	 * @return sessionName
-	 */
-	public String getSessionName() {
-		return sessionName;
-	}
-	
-	/**
-	 * Set session name
-	 * @param sessionName
-	 */
-	public void setSessionName(String sessionName) {
-		this.sessionName = sessionName;
-	}
 	/**
 	 * Get Appointment
 	 * @return appointments
@@ -64,21 +44,17 @@ public class SessionDetails {
 	 * Calculates the duration of the entire session spanning across all the appointments.
 	 * @return
 	 */
-	public String duration()
-	{
+	public String duration() {
 		Integer mins = null;
 		Integer hours=null;
 		String duration;
-		for(Iterator<Appointment>it=appointments.iterator();it.hasNext();)
-		{
-			Appointment appObj=it.next();
-			mins+=appObj.getDurationInMinutes();
+		for(Appointment appObj : getAppointments()) {
+			mins += appObj.getDurationInMinutes();
 			
 		}
-		
 		hours=mins/60;
 		mins=mins%60;
-		duration=hours+"hours "+mins+"mins";
+		duration=hours + "hours " + mins + "mins!";
 		return duration;
 	}
 	
@@ -87,42 +63,38 @@ public class SessionDetails {
 	 * 
 	 * @return
 	 */
-	public String toString() 
-	{
-		String ret;
-		ret="\nSession Name:"+sessionName;
-		for(Iterator<Appointment>it=appointments.iterator();it.hasNext();)
-		{
-			ret+=it.next().toString();
+	public String toString()  {
+		StringBuilder sb = new StringBuilder();
+		for(Appointment appObj : getAppointments()) {
+			sb
+				.append(appObj)
+				.append("\n")
+			;
 		}
-		return ret;
+		return sb.toString();
 	}
 	
 	/**
 	 * hashCode implementation
 	 */
-	public int hashcode()
-	{
-		int hash;
-		hash=sessionName.hashCode();
-		for(Iterator<Appointment>it=appointments.iterator();it.hasNext();)
-		{
-			hash+=it.next().hashCode();
+	public int hashcode() {
+		int hash = 0;
+		for(Appointment appObj : getAppointments()) {
+			hash += appObj.hashCode();
 			
 		}
-		hash=hash/101;
+		hash = hash/101;
 		return hash;
 	}
 	
 	public boolean equals(Object obj)
 	{
-		if(obj==null||!(obj instanceof SessionDetails))
-		{
+		if(obj==null||!(obj instanceof SessionDetails)) {
 			return false;
 		}
 		SessionDetails sesObj=(SessionDetails)obj;
 		System.out.println(this + " AND " + sesObj + " equals called");
 
-		return(this.sessionName.equals(sesObj.sessionName)&&this.appointments.equals(sesObj.appointments));
+		return(this.appointments.equals(sesObj.appointments));
 	}
 }

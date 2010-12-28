@@ -1,4 +1,4 @@
-package com.cgi.open.EasyShare.model;
+package com.cgi.open.easyshare.model;
 
 /**
  * The class Appointment represents time units (day wise) of a particular event. It has
@@ -131,9 +131,19 @@ public class Appointment {
 	 * @return
 	 */
 	public String toString() {
-		String ret = "Appointment On " + getDate() + " " +
-				"(" + getFromTime() + " - " + getToTime() + ")";
-		return ret;
+		StringBuilder sb = new StringBuilder();
+		sb
+			.append("#")
+			.append(getAppointmentId())
+			.append(": ")
+			.append(getDate())
+			.append(" (")
+			.append(getFromTime())
+			.append("-")
+			.append(getToTime())
+			.append(")")
+		;
+		return sb.toString();
 	}
 	
 	/**
