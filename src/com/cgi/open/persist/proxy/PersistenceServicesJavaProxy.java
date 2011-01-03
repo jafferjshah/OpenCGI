@@ -110,9 +110,8 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException {
 		Session thisSession = getSession(sessionId);
-		if (thisSession.getAdmin() == null
-				&& checkForDuplicacy(admin, UserType.ADMIN)
-				&& checkForDuplicacy(sessionId, admin, UserType.ADMIN)) {
+		if (thisSession.getAdmin() == null) {
+			admin.setUserType(UserType.ADMIN);
 			thisSession.setAdmin(admin);
 			return Boolean.TRUE;
 		}
@@ -123,21 +122,23 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException {
 		Session thisSession = getSession(sessionId);
-		if (checkForDuplicacy(facilitator, UserType.FACILITATOR)
-				&& checkForDuplicacy(sessionId, facilitator,
-						UserType.FACILITATOR)) {
-			if (thisSession.getFacilitators() == null) {
-				thisSession.setFacilitators(new HashSet<User>());
-			}
-			thisSession.addFacilitator(facilitator);
-			return Boolean.TRUE;
+		if (thisSession.getFacilitators() == null) {
+			thisSession.setFacilitators(new HashSet<User>());
 		}
-		return Boolean.FALSE;
+		facilitator.setUserType(UserType.FACILITATOR);
+		thisSession.addFacilitator(facilitator);
+		return Boolean.TRUE;
 	}
 
 	public Boolean addNewAttendee(Integer sessionId, User attendee)
 			throws SessionNotAvailableException {
-		return null;
+		Session thisSession = getSession(sessionId);
+		if (thisSession.getAttendees() == null) {
+			thisSession.setAttendees(new HashSet<User>());
+		}
+		attendee.setUserType(UserType.ATTENDEE);
+		thisSession.getAttendees().add(attendee);
+		return Boolean.TRUE;
 	}
 
 	public Boolean checkForDuplicacy(User anyUser, UserType userType) {
@@ -152,8 +153,63 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	public Boolean checkForDuplicacy(Integer sessionId, User anyUser,
 			UserType userType) throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException {
-		// TODO Auto-generated method stub
-		return null;
+		Session thisSession = getSession(sessionId);
+		// ADMIN = ATTENDEE, FACILITATOR (alone) -- START
+		if (userType.equals(UserType.ADMIN)) {
+			for (User user : thisSession.getFacilitators()) {
+				if (user.equals(anyUser)) {
+					throw new PresentAsOtherUserTypeException(
+							"The user cant be an admin, because the user is already a facilitator for this session!");
+				}
+			}
+		}
+		if (userType.equals(UserType.ATTENDEE)) {
+			for (User user : thisSession.getFacilitators()) {
+				if (user.equals(anyUser)) {
+					throw new PresentAsOtherUserTypeException(
+							"The user cant be an attendee, because the user is already a facilitator for this session!");
+				}
+			}
+		}
+		if (userType.equals(UserType.FACILITATOR)) {
+			User admin;
+			if ((admin = thisSession.getAdmin()) != null
+					&& admin.equals(anyUser)) {
+				throw new PresentAsOtherUserTypeException(
+							"The user cant be a facilitator, because the user is already an admin for this session!");
+			}
+			for (User user : thisSession.getAttendees()) {
+				if (user.equals(anyUser)) {
+					throw new PresentAsOtherUserTypeException(
+							"The user cant be a facilitator, because the user is already an attendee for this session!");
+				}
+			}
+		}
+		// ADMIN = ATTENDEE, FACILITATOR (alone) -- STOP
+		//Already present as same user type --START
+		if (userType.equals(UserType.ADMIN)) {
+			User admin;
+			if ((admin = thisSession.getAdmin()) != null
+					&& admin.equals(anyUser)) {
+				return Boolean.TRUE;
+			}
+		}
+		if (userType.equals(UserType.ATTENDEE)) {
+			for (User user : thisSession.getAttendees()) {
+				if (user.equals(anyUser)) {
+					return Boolean.TRUE;
+				}
+			}
+		}
+		if (userType.equals(UserType.FACILITATOR)) {
+			for (User user : thisSession.getFacilitators()) {
+				if (user.equals(anyUser)) {
+					return Boolean.TRUE;
+				}
+			}
+		}
+		//Already present as same user type --STOP
+		return Boolean.FALSE;
 	}
 
 	public Set<User> getUsers(Integer sessionId, UserType userType)
