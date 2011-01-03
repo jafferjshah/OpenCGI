@@ -19,20 +19,18 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	
 	private PersistenceServices persistent = ServicesMapper.getPersistenceServicesProxyInstance();
 
-	public Set<User> addAttendees(Integer sessionId, Set<User> attendees) 
-	{
-		try {
-			Session thisSession=persistent.getSession(sessionId);
-			thisSession.addAttendees(attendees);
-		} catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+	/**
+	 * This method will be called only at the first time. For altering,
+	 * the attendees set, call add/remove attendee services.
+	 */
+	public Set<User> addAttendees(Integer sessionId, Set<User> attendees)
+	throws SessionNotAvailableException {
+		Session thisSession = persistent.getSession(sessionId);
+		thisSession.setAttendees(attendees);
+		return thisSession.getAttendees();
 	}
 
-	public Message addMessage(Integer sessionId, Message message) 
-	{
+	public Message addMessage(Integer sessionId, Message message) {
 		try {
 			Session thisSession=persistent.getSession(sessionId);
 			thisSession.addMessage(message);
@@ -55,9 +53,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Boolean addUserToSession(Integer sessionId, Integer adminId,
-			UserType userType) 
-	{
-		
+			UserType userType) {
 		
 		return null;
 	}
