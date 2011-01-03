@@ -17,7 +17,7 @@ public class Session
 	{
 		appointments=new HashSet<Appointment>();
 		facilitators=new HashSet<User>();
-		pool=new ResourcePool();
+		resourcePool=new HashSet<Resource>();
 		attendees=new HashSet<User>();
 		messages=new ArrayList<Message>();
 	}
@@ -46,7 +46,7 @@ public class Session
 	/**
 	 * Repository of resources of the session.
 	 */
-	private ResourcePool pool;
+	private Set<Resource>resourcePool;
 	
 	/**
 	 * List of messages of the session.
@@ -81,7 +81,32 @@ public class Session
 	public void setFacilitators(Set<User> facilitators) {
 		this.facilitators = facilitators;
 	}
-
+	
+	public void addFacilitator(Facilitator facilitator)
+	{
+		facilitators.add(facilitator);
+	}
+	
+	public void removeFacilitator(Integer id)
+	{
+		facilitators.remove(getFacilitator(id));
+		
+	}
+	
+	public User getFacilitator(Integer id)
+	{
+		User result = null;
+		for(
+				Iterator<User> it = facilitators.iterator();
+				it.hasNext();
+			) {
+			result = it.next();
+			if(result.getEmpid() == id) {
+				break;
+			}
+		}
+		return result;
+	}
 	/**
 	 * Get session id
 	 * @return sessionId
@@ -113,24 +138,53 @@ public class Session
 	public void setAdmin(User admin) {
 		this.admin = admin;
 	}
-
-	/**Adds attendee to the set of attendees of the session
-	 * @param attendee
-	 */
-	public void addAttendee(Attendee attendee)
-	{
-		attendees.add(attendee);
-	}
 	
 	/**
-	 * Adds message to the list of messages.
-	 * @param message
+	 * Gets the resource pool of the session
+	 * @return
 	 */
-	public void addMessage(Message message)
-	{
-		messages.add(message);
+	public Set<Resource> getResourcePool() {
+		return resourcePool;
+	}
+	/**
+	 * Sets the resource pool
+	 * 
+	 */
+	public void setResourcePool(Set<Resource> resourcePool) {
+		this.resourcePool = resourcePool;
 	}
 	
+	/**This method adds resource to the resourcepool
+	 * @param resource
+	 */
+	public void addResource(Resource resource) {
+		resourcePool.add(resource);
+	}
+	
+	public void removeResource(Integer resourceId)
+	{
+		resourcePool.remove(getResource(resourceId));
+	}
+	
+	/**This method returns resource searching by name
+	 * @param name
+	 * @return
+	 */
+	public Resource getResource(Integer id) {
+		Resource result = null;
+		for(
+				Iterator<Resource> it = resourcePool.iterator();
+				it.hasNext();
+			) {
+			result = it.next();
+			if(result.getResourceId() == id) {
+				break;
+			}
+		}
+		return result;
+	}
+
+		
 	/**
 	 * Get Appointment
 	 * @return appointments
@@ -156,6 +210,26 @@ public class Session
 		appointments.add(appointment);
 	}
 	
+	public void removeAppointment(Integer appointmentId)
+	{
+		appointments.remove(getAppointment(appointmentId));
+	}
+	
+	public Appointment getAppointment(Integer id)
+	{
+		Appointment result = null;
+		for(
+				Iterator<Appointment> it = appointments.iterator();
+				it.hasNext();
+			) {
+			result = it.next();
+			if(result.getAppointmentId() == id) {
+				break;
+			}
+		}
+		return result;
+	}
+	
 	public Set<User> getAttendees() {
 		return attendees;
 	}
@@ -164,12 +238,34 @@ public class Session
 		this.attendees = attendees;
 	}
 
-	public ResourcePool getPool() {
-		return pool;
+	/**Adds attendee to the set of attendees of the session
+	 * @param attendee
+	 */
+	public void addAttendees(Set<User> attendees)
+	{
+		attendees.addAll(attendees);
 	}
-
-	public void setPool(ResourcePool pool) {
-		this.pool = pool;
+	
+	public void removeAttendees(Integer id)
+	{
+		attendees.remove(getAttendee(id));
+	}
+	
+	/**
+	 * Gets Attendee from the set based on attendee's id.
+	 * @param id
+	 * @return
+	 */
+	public User getAttendee(int id) {
+		User result=null;
+		for(Iterator<User> it= attendees.iterator(); it.hasNext();)
+		{
+			result=it.next();
+			if(result.getEmpid()==id) {
+				break;
+			}
+		}
+		return result;
 	}
 
 	public List<Message> getMessages() {
@@ -179,7 +275,17 @@ public class Session
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
-
+	
+	/**
+	 * Adds message to the list of messages.
+	 * @param message
+	 */
+	public void addMessage(Message message)
+	{
+		messages.add(message);
+	}
+	
+	
 	/**
 	 * The String representation of the Session object
 	 * 
@@ -246,22 +352,7 @@ public class Session
 				&& this.getAppointments().equals(sessionObj.getAppointments()));
 	}
 
-	/**
-	 * Gets Attendee from the set based on attendee's id.
-	 * @param id
-	 * @return
-	 */
-	public User getAttendee(int id) {
-		User result=null;
-		for(Iterator<User> it= attendees.iterator(); it.hasNext();)
-		{
-			result=it.next();
-			if(result.getEmpid()==id) {
-				break;
-			}
-		}
-		return result;
-	}
+	
 	
 	/**
 	 * Calculates the duration of the entire session spanning across all the appointments.
