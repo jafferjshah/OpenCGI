@@ -57,7 +57,7 @@ public interface EasyShareServices {
 	 * @param userType
 	 * @return
 	 */
-	public Set<User> addUserToSession(Integer sessionId, 
+	public Boolean addUserToSession(Integer sessionId, 
 			Integer adminId, UserType userType);
 	
 	/**
@@ -67,7 +67,7 @@ public interface EasyShareServices {
 	 * @param facilitatorId
 	 * @return
 	 */
-	public Set<User> removeFacilitator(Integer sessionId, 
+	public Boolean removeFacilitator(Integer sessionId, 
 			Integer facilitatorId);
 	
 	
@@ -88,7 +88,7 @@ public interface EasyShareServices {
 	 * @param resource
 	 * @return
 	 */
-	public Set<Resource> addResource(Integer sessionId, 
+	public Resource addResource(Integer sessionId, 
 			Resource resource);
 	
 	/**
@@ -98,7 +98,7 @@ public interface EasyShareServices {
 	 * @param resourceId
 	 * @return
 	 */
-	public Set<Resource> removeResource(Integer sessionId, 
+	public Boolean removeResource(Integer sessionId, 
 			Integer resourceId);
 	
 	/**
@@ -107,7 +107,7 @@ public interface EasyShareServices {
 	 * @param message
 	 * @return
 	 */
-	public List<Message> addMessage(Integer sessionId, 
+	public Message addMessage(Integer sessionId, 
 			Message message);
 	
 	/**
