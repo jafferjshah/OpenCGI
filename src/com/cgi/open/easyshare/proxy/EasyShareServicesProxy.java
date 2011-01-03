@@ -18,17 +18,17 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return null;
 	}
 
-	public List<Message> addMessage(Integer sessionId, Message message) {
+	public Message addMessage(Integer sessionId, Message message) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set<Resource> addResource(Integer sessionId, Resource resource) {
+	public Resource addResource(Integer sessionId, Resource resource) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set<User> addUserToSession(Integer sessionId, Integer adminId,
+	public Boolean addUserToSession(Integer sessionId, Integer adminId,
 			UserType userType) {
 		// TODO Auto-generated method stub
 		return null;
@@ -75,14 +75,14 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return null;
 	}
 
-	public Set<User> removeFacilitator(Integer sessionId, Integer facilitatorId) {
+	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Set<Resource> removeResource(Integer sessionId, Integer resourceId) {
+	public Boolean removeResource(Integer sessionId, Integer resourceId) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	public Set<Appointment> saveAppointments(Integer sessionId,
