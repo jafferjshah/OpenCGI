@@ -13,6 +13,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 
 	private static Set<Session> sessionsStore = new HashSet<Session>();
 	
+	public Set<Session> getSessionsStore()
+	{
+		return sessionsStore;
+	}
+	
 	public Session getSession(Integer sessionId)
 			throws SessionNotAvailableException {
 		for(Session session : sessionsStore) {
