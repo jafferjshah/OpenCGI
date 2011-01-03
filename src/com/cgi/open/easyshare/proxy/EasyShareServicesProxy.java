@@ -3,6 +3,8 @@ package com.cgi.open.easyshare.proxy;
 import java.util.List;
 import java.util.Set;
 
+import com.cgi.open.ServicesMapper;
+import com.cgi.open.easyshare.DuplicateSessionException;
 import com.cgi.open.easyshare.EasyShareServices;
 import com.cgi.open.easyshare.model.Appointment;
 import com.cgi.open.easyshare.model.Message;
@@ -10,8 +12,11 @@ import com.cgi.open.easyshare.model.Resource;
 import com.cgi.open.easyshare.model.Session;
 import com.cgi.open.easyshare.model.User;
 import com.cgi.open.easyshare.model.UserType;
+import com.cgi.open.persist.PersistenceServices;
 
 public class EasyShareServicesProxy implements EasyShareServices {
+	
+	private PersistenceServices persistent = ServicesMapper.getPersistenceServicesProxyInstance();
 
 	public Set<User> addAttendees(Integer sessionId, Set<User> attendees) {
 		// TODO Auto-generated method stub
@@ -35,9 +40,16 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Session createSession(String sessionName,
-			Set<Appointment> appointments) {
-		// TODO Auto-generated method stub
-		return null;
+			Set<Appointment> appointments) throws DuplicateSessionException {
+		Session newSession = new Session();
+		newSession.setSessionName(sessionName);
+		newSession.setAppointments(appointments);
+		if(persistent.checkForDuplicacy(newSession)) {
+			throw new DuplicateSessionException("Session with the given details already present");
+		}
+		Integer sessionId = persistent.saveNewSession(newSession);
+		newSession.setSessionId(sessionId);
+		return newSession;
 	}
 
 	public Integer designateUserToAdmin(User user, UserType userType) {

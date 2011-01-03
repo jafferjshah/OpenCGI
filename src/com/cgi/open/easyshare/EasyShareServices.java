@@ -34,7 +34,7 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public Session createSession(String sessionName, 
-			Set<Appointment> appointments);
+			Set<Appointment> appointments) throws DuplicateSessionException;
 	
 	/**
 	 * The service adds/edits/removes appointments to an
