@@ -79,7 +79,7 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public Set<User> addAttendees(Integer sessionId, 
-			Set<User> attendees);
+			Set<User> attendees) throws SessionNotAvailableException;
 	
 	/**
 	 * The service adds a resource to the resource pool 

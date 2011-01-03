@@ -82,7 +82,7 @@ public class Session
 		this.facilitators = facilitators;
 	}
 	
-	public void addFacilitator(Facilitator facilitator)
+	public void addFacilitator(User facilitator)
 	{
 		facilitators.add(facilitator);
 	}
@@ -243,7 +243,7 @@ public class Session
 	 */
 	public void addAttendees(Set<User> attendees)
 	{
-		attendees.addAll(attendees);
+		this.attendees.addAll(attendees);
 	}
 	
 	public void removeAttendees(Integer id)
