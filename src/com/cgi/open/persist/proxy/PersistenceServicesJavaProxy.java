@@ -7,6 +7,8 @@ import com.cgi.open.easyshare.AppointmentNotAvailableException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.SessionNotAvailableException;
 import com.cgi.open.easyshare.model.Appointment;
+import com.cgi.open.easyshare.model.Message;
+import com.cgi.open.easyshare.model.Resource;
 import com.cgi.open.easyshare.model.Session;
 import com.cgi.open.easyshare.model.User;
 import com.cgi.open.easyshare.model.UserType;
@@ -52,7 +54,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		newSession.setSessionId(maxId + 1);// Ignoring the id (if already set),
 											// making it new
 		sessionsStore.add(newSession);
-		return maxId;
+		return (maxId+1);
 	}
 
 	public Boolean deleteSession(Integer sessionId) {
@@ -100,12 +102,41 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 				maxId = appointment.getAppointmentId();
 			}
 		}
-		newAppoinment.setAppointmentId(maxId);// Ignoring the id (if already
+		newAppoinment.setAppointmentId(maxId+1);// Ignoring the id (if already
 												// set), making it new
 		thisSession.addAppointment(newAppoinment);
-		return maxId;
+		return maxId+1;
+	}
+	
+	public Integer saveNewMessage(Integer sessionId,
+			Message newMessage) throws SessionNotAvailableException {
+		Session thisSession = getSession(sessionId);
+		Integer maxId = 0;
+		for (Message message : thisSession.getMessages()) {
+			if (message.getMessageId() > maxId) {
+				maxId = message.getMessageId();
+			}
+		}
+		newMessage.setMessageId(maxId+1);// Ignoring the id (if already
+												// set), making it new
+		thisSession.addMessage(newMessage);
+		return maxId+1;
 	}
 
+	public Integer saveNewResource(Integer sessionId,
+			Resource newResource) throws SessionNotAvailableException {
+		Session thisSession = getSession(sessionId);
+		Integer maxId = 0;
+		for (Resource resource : thisSession.getResourcePool()) {
+			if (resource.getResourceId() > maxId) {
+				maxId = resource.getResourceId();
+			}
+		}
+		newResource.setResourceId(maxId+1);// Ignoring the id (if already
+												// set), making it new
+		thisSession.addResource(newResource);
+		return maxId+1;
+	}
 	public Boolean addAdmin(Integer sessionId, User admin)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException {
