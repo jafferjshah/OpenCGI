@@ -1,6 +1,9 @@
 package com.cgi.open.easyshare.proxy;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.cgi.open.ServicesMapper;
@@ -163,5 +166,59 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
+	public Map<UserType,Set<Session>> getMySessions(User anyUser)
+	{
+		Map<UserType, Set<Session>> mySessions = new HashMap<UserType, Set<Session>>();
+		Set<Session> adminSessions=new HashSet<Session>();
+		Set<Session> facilitatorSessions=new HashSet<Session>();
+		Set<Session> attendeeSessions=new HashSet<Session>();
+		
+		if(persistent.checkForDuplicacy(anyUser,UserType.ADMIN))
+		{
+			for(Session thisSession:getAllSessions())
+			{
+				if(thisSession.getAdmin().getEmpid()==anyUser.getEmpid())
+				{
+					adminSessions.add(thisSession);
+				}
+			}
+		}
+		if(persistent.checkForDuplicacy(anyUser,UserType.FACILITATOR))
+		{
+			for(Session thisSession:getAllSessions())
+			{
+				for(User thisFacilitator:thisSession.getFacilitators())
+				{
+					if(thisFacilitator.getEmpid()==anyUser.getEmpid())
+					{
+						facilitatorSessions.add(thisSession);
+					}
+				}
+			}
+			
+		}
+		if(persistent.checkForDuplicacy(anyUser,UserType.ATTENDEE))
+		{
+			for(Session thisSession:getAllSessions())
+			{
+				for(User thisAttendee:thisSession.getAttendees())
+				{
+					if(thisAttendee.getEmpid()==anyUser.getEmpid())
+					{
+						attendeeSessions.add(thisSession);
+					}
+				}
+			}
+		}
+		
+		mySessions.put(UserType.ADMIN,adminSessions);
+		mySessions.put(UserType.FACILITATOR,facilitatorSessions);
+		mySessions.put(UserType.ATTENDEE,attendeeSessions);
 
-}
+		return mySessions;
+	}
+	}
+
+

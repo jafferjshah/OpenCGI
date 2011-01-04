@@ -155,10 +155,6 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException {
 		Session thisSession = getSession(sessionId);
-
-		if (thisSession.getFacilitators() == null) {
-			thisSession.setFacilitators(new HashSet<User>());
-		}
 		facilitator.setUserType(UserType.FACILITATOR);
 		thisSession.addFacilitator(facilitator);
 		return Boolean.TRUE;
@@ -169,9 +165,6 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 			throws SessionNotAvailableException {
 
 		Session thisSession = getSession(sessionId);
-		if (thisSession.getAttendees() == null) {
-			thisSession.setAttendees(new HashSet<User>());
-		}
 		attendee.setUserType(UserType.ATTENDEE);
 		thisSession.getAttendees().add(attendee);
 		return Boolean.TRUE;

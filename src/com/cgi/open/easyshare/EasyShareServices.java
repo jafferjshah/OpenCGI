@@ -1,6 +1,7 @@
 package com.cgi.open.easyshare;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.cgi.open.easyshare.model.Admin;
@@ -154,4 +155,5 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public Set<Session> getAllSessions();
+	public Map<UserType,Set<Session>> getMySessions(User anyUser);
 }
