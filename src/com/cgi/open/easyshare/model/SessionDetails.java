@@ -20,6 +20,7 @@ public class SessionDetails {
 	
 	/**
 	 * Get Appointment
+	 * Change3
 	 * @return appointments
 	 */
 	public Set<Appointment> getAppointments() {
