@@ -14,6 +14,7 @@ import java.util.Set;
 public class SessionDetails {
 	/**
 	 * Holds the day wise schedule details of the session.
+	 * Change2
 	 */
 	private Set<Appointment> appointments;
 	
