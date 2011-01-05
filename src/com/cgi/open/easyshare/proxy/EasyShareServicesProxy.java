@@ -168,6 +168,10 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 	
 	
+	/**
+	 * 
+	 * Coded by Sanjana
+	 */
 	public Map<UserType,Set<Session>> getMySessions(User anyUser)
 	{
 		Map<UserType, Set<Session>> mySessions = new HashMap<UserType, Set<Session>>();
