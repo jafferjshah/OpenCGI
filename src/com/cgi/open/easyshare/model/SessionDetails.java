@@ -7,8 +7,9 @@ import java.util.Set;
  * Session details class represents the details of the corresponding session.
  * It contains the session name and a set of appointments.
  * Appointments denote the day wise schedule of the session.
- * @author jaffer.shah
- * @deprecated The contents of this class are included in the Session class
+
+ *'@author sanjana.bayya' 
+ *
  */
 public class SessionDetails {
 	/**
