@@ -20,7 +20,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public int getEmpid() {
+	public Integer getEmpid() {
 		return empid;
 	}
 	public void setEmpid(int empid) {
@@ -47,7 +47,7 @@ public class User {
 		return sb.toString();
 	}
 	public int hashCode() {
-		int hash = getEmail().hashCode();
+		int hash = getEmpid().hashCode()+getUserType().hashCode();
 		System.out.println(this + " hashCode called : " + hash);
 		return hash;
 	}
@@ -57,6 +57,6 @@ public class User {
 		}
 		User userObj=(User)obj;
 		System.out.println(this + " AND " + userObj + " equals called");
-		return(this.getEmail().equals(userObj.getEmail()));
+		return(this.getEmpid()==userObj.getEmpid())&&(this.getUserType().equals(userObj.getUserType()));
 	}
 }

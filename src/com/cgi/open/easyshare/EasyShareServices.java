@@ -23,9 +23,10 @@ public interface EasyShareServices {
 	 * The service has no effect for Attendee users.
 	 * @param user
 	 * @return
+	 * @throws PresentAsSameUserTypeException 
 	 */
-	public Integer designateUserToAdmin(User user, 
-			UserType userType);
+	public Boolean designateUser(User user, 
+			UserType userType) throws PresentAsSameUserTypeException;
 	
 	/**
 	 * The service creates a session with the provided sessionName
@@ -54,12 +55,14 @@ public interface EasyShareServices {
 	 * The service adds the user (ADMIN or FACILITATOR) to an
 	 * existing session.
 	 * @param sessionId
-	 * @param adminId
+	 * @param userId
 	 * @param userType
 	 * @return
+	 * @throws PresentAsOtherUserTypeException 
+	 * @throws UserNotAvailableException 
 	 */
 	public Boolean addUserToSession(Integer sessionId, 
-			Integer adminId, UserType userType);
+			Integer userId, UserType userType)throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException;
 	
 	/**
 	 * The service removes a facilitator from an existing session. 
@@ -67,9 +70,10 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @param facilitatorId
 	 * @return
+	 * @throws SessionNotAvailableException 
 	 */
 	public Boolean removeFacilitator(Integer sessionId, 
-			Integer facilitatorId);
+			Integer facilitatorId) throws SessionNotAvailableException;
 	
 	
 	/**
@@ -79,8 +83,11 @@ public interface EasyShareServices {
 	 * @param attendees
 	 * @return
 	 */
-	public Set<User> addAttendees(Integer sessionId, 
+	public Boolean addAttendees(Integer sessionId, 
 			Set<User> attendees) throws SessionNotAvailableException;
+	public Boolean addAttendee(Integer sessionId, User user)
+	throws SessionNotAvailableException;
+	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException ;
 	
 	/**
 	 * The service adds a resource to the resource pool 
@@ -89,8 +96,8 @@ public interface EasyShareServices {
 	 * @param resource
 	 * @return
 	 */
-	public Resource addResource(Integer sessionId, 
-			Resource resource);
+	public Integer addResource(Integer sessionId, 
+			Resource resource)throws SessionNotAvailableException;
 	
 	/**
 	 * The service removes a resource to the resource pool 
@@ -98,9 +105,10 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @param resourceId
 	 * @return
+	 * @throws SessionNotAvailableException 
 	 */
 	public Boolean removeResource(Integer sessionId, 
-			Integer resourceId);
+			Integer resourceId) throws SessionNotAvailableException;
 	
 	/**
 	 * The service adds a message to an existing session.
@@ -108,23 +116,25 @@ public interface EasyShareServices {
 	 * @param message
 	 * @return
 	 */
-	public Message addMessage(Integer sessionId, 
-			Message message);
+	public Integer addMessage(Integer sessionId, 
+			Message message)throws SessionNotAvailableException;
+	public Boolean removeMessage(Integer sessionId, Integer messageId) throws SessionNotAvailableException ;
 	
 	/**
 	 * The service gets the details of an existing session.
 	 * @param sessionId
 	 * @return
 	 */
-	public Session getSession(Integer sessionId);
+	public Session getSession(Integer sessionId)throws SessionNotAvailableException;
 	
 	/**
 	 * The service gets the users of particular type belonging
 	 * to an existing session.
 	 * @param sessionId
 	 * @return
+	 * @throws SessionNotAvailableException 
 	 */
-	public Set<User> getUsers(Integer sessionId, UserType userType);
+	public Set<User> getUsers(Integer sessionId, UserType userType) throws SessionNotAvailableException;
 	
 	/**
 	 * The services gets all the resources associated with an
@@ -132,7 +142,7 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @return
 	 */
-	public Set<Resource> getResources(Integer sessionId);
+	public Set<Resource> getResources(Integer sessionId)throws SessionNotAvailableException;
 	
 	/**
 	 * The services gets all the messages associated with an
@@ -140,15 +150,16 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @return
 	 */
-	public List<Message> getMessages(Integer sessionId);
+	public List<Message> getMessages(Integer sessionId)throws SessionNotAvailableException;
 	
 	/**
 	 * The service gets the User owning the user id. Only used
 	 * for Admin or Facilitator.  
 	 * @param userId
 	 * @return
+	 * @throws UserNotAvailableException 
 	 */
-	public User getUser(Integer userId);
+	public User getUser(Integer userId,UserType userType) throws UserNotAvailableException;
 	
 	/**
 	 * The service returns all the sessions related to the user.
@@ -156,4 +167,6 @@ public interface EasyShareServices {
 	 */
 	public Set<Session> getAllSessions();
 	public Map<UserType,Set<Session>> getMySessions(User anyUser);
+	public Integer addAppointment(Integer sessionId, Appointment appointment)
+	throws SessionNotAvailableException;
 }

@@ -9,7 +9,10 @@ import java.util.Set;
 import com.cgi.open.ServicesMapper;
 import com.cgi.open.easyshare.DuplicateSessionException;
 import com.cgi.open.easyshare.EasyShareServices;
+import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
+import com.cgi.open.easyshare.PresentAsSameUserTypeException;
 import com.cgi.open.easyshare.SessionNotAvailableException;
+import com.cgi.open.easyshare.UserNotAvailableException;
 import com.cgi.open.easyshare.model.Appointment;
 import com.cgi.open.easyshare.model.Message;
 import com.cgi.open.easyshare.model.Resource;
@@ -26,39 +29,65 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	 * This method will be called only at the first time. For altering,
 	 * the attendees set, call add/remove attendee services.
 	 */
-	public Set<User> addAttendees(Integer sessionId, Set<User> attendees)
+	public Boolean addAttendees(Integer sessionId, Set<User> attendees)
 	throws SessionNotAvailableException {
-		Session thisSession = persistent.getSession(sessionId);
-		thisSession.setAttendees(attendees);
-		return thisSession.getAttendees();
-	}
-
-	public Message addMessage(Integer sessionId, Message message) {
-		try {
-			Session thisSession=persistent.getSession(sessionId);
-			thisSession.addMessage(message);
-		} catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		Boolean flag=Boolean.TRUE;
+		for(User user:attendees)
+		{
+			flag=flag&&persistent.addAttendee(sessionId, user);
 		}
-		return null;
+		return flag;
+	}
+	public Boolean addAttendee(Integer sessionId, User user)
+	throws SessionNotAvailableException {
+		return(persistent.addAttendee(sessionId, user));
 	}
 
-	public Resource addResource(Integer sessionId, Resource resource) {
-		try {
-			Session thisSession=persistent.getSession(sessionId);
-			thisSession.addResource(resource);
-		} catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public Boolean addUserToSession(Integer sessionId, Integer adminId,
-			UserType userType) {
+	public Integer addMessage(Integer sessionId, Message message)
+	throws SessionNotAvailableException
+	{
+		Integer messageId;
 		
-		return null;
+			 messageId=persistent.saveNewMessage(sessionId,message);
+			 return messageId;	
+	}
+
+	public Integer addResource(Integer sessionId, Resource resource)
+	throws SessionNotAvailableException
+	{
+		Integer resourceId;
+		resourceId=persistent.saveNewResource(sessionId,resource);
+		return resourceId;
+		
+	}
+	
+	public Integer addAppointment(Integer sessionId, Appointment appointment)
+	throws SessionNotAvailableException
+	{
+		Integer appointmentId;
+		
+		appointmentId=persistent.saveNewAppointment(sessionId,appointment);
+			 return appointmentId;	
+	}
+
+	public Boolean addUserToSession(Integer sessionId, Integer userId,
+			UserType userType) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException
+	{
+
+			User user=persistent.getUser(userId,userType);
+			
+			if(userType.equals(UserType.FACILITATOR))
+			{
+				return(persistent.addFacilitator(sessionId,user));
+			}
+			if(userType.equals(UserType.ATTENDEE))
+			{
+				return(persistent.addAttendee(sessionId,user));
+			}
+			return Boolean.FALSE;
+			
+		
+		
 	}
 
 	public Session createSession(String sessionName,
@@ -74,9 +103,18 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return newSession;
 	}
 
-	public Integer designateUserToAdmin(User user, UserType userType) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean designateUser(User user, UserType userType) throws PresentAsSameUserTypeException {
+		
+			if(persistent.checkForDuplicacy(user, userType))
+			{
+				throw new PresentAsSameUserTypeException("User already present in the store as same UserType");
+			}
+			else
+			{
+				user.setUserType(userType);
+			}
+		
+		return(persistent.promoteUser(user, userType));
 	}
 
 	public Set<Session> getAllSessions() 
@@ -86,85 +124,62 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return sessions;
 	}
 
-	public List<Message> getMessages(Integer sessionId) {
-		List<Message> messageList=null;
-		try {
-			Session thisSession=persistent.getSession(sessionId);
-			 messageList=thisSession.getMessages();
-		} catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public List<Message> getMessages(Integer sessionId)throws SessionNotAvailableException
+	{
+		List<Message> messageList;
+		Session thisSession=persistent.getSession(sessionId);
+		messageList=thisSession.getMessages();		
 		return messageList;
 	}
 
-	public Set<Resource> getResources(Integer sessionId)
+	public Set<Resource> getResources(Integer sessionId)throws SessionNotAvailableException
 	{
-		Set<Resource> resources=null; 
-		try {
-			Session thisSession=persistent.getSession(sessionId);
-			 resources=thisSession.getResourcePool();
-		} catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Set<Resource> resources; 
+		Session thisSession=persistent.getSession(sessionId);
+		resources=thisSession.getResourcePool();
 		return resources;
 	}
 
-	public Session getSession(Integer sessionId) 
+	public Session getSession(Integer sessionId)throws SessionNotAvailableException 
 	{
-		Session thisSession=null;
-		try 
-		{
-			 thisSession=persistent.getSession(sessionId);
-			 
-		} 
-		catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Session thisSession;
+		thisSession=persistent.getSession(sessionId);
 		return thisSession;
 		
 	}
 
-	public User getUser(Integer userId) {
-		// TODO Auto-generated method stub
-		return null;
+	public User getUser(Integer userId,UserType userType) throws UserNotAvailableException 
+	{
+		User user=persistent.getUser(userId,userType);
+		return user;
 	}
 
-	public Set<User> getUsers(Integer sessionId, UserType userType) {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<User> getUsers(Integer sessionId, UserType userType) throws SessionNotAvailableException {
+		return(persistent.getUsers(sessionId, userType));
 	}
 
-	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId) {
+	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId) throws SessionNotAvailableException {
 		
-		try {
-			Session thisSession=persistent.getSession(sessionId);
-			 thisSession.removeFacilitator(facilitatorId);
-		} catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		return(persistent.removeFacilitator(sessionId, facilitatorId));
 	}
 
-	public Boolean removeResource(Integer sessionId, Integer resourceId) {
-		try {
-			Session thisSession=persistent.getSession(sessionId);
-			 thisSession.removeResource(resourceId);
-		} catch (SessionNotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public Boolean removeResource(Integer sessionId, Integer resourceId) throws SessionNotAvailableException {
+		return(persistent.removeResource(sessionId, resourceId));
 		}
-		return null;
+	public Boolean removeMessage(Integer sessionId, Integer messageId) throws SessionNotAvailableException {
+		return(persistent.removeMessage(sessionId, messageId));
+		}
+	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException {
+		return(persistent.removeAttendee(sessionId, attendeeId));
+		}
 		
-	}
+		
+	
 
 	public Set<Appointment> saveAppointments(Integer sessionId,
 			Set<Appointment> appointments) {
-		// TODO Auto-generated method stub
 		return null;
+		
 	}
 	
 	
