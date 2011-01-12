@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.cgi.open.ServicesMapper;
+import com.cgi.open.easyshare.AdminAssignedException;
+import com.cgi.open.easyshare.AppointmentNotAvailableException;
+import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
 import com.cgi.open.easyshare.DuplicateSessionException;
 import com.cgi.open.easyshare.EasyShareServices;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
@@ -28,19 +31,31 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	/**
 	 * This method will be called only at the first time. For altering,
 	 * the attendees set, call add/remove attendee services.
+	 * @throws AdminAssignedException 
+	 * @throws AttendeeAlreadyRegisteredException 
+	 * @throws UserNotAvailableException 
+	 * @throws PresentAsOtherUserTypeException 
 	 */
 	public Boolean addAttendees(Integer sessionId, Set<User> attendees)
-	throws SessionNotAvailableException {
+	throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException {
 		Boolean flag=Boolean.TRUE;
 		for(User user:attendees)
 		{
-			flag=flag&&persistent.addAttendee(sessionId, user);
+			flag=flag&&persistent.addUserToSession(sessionId, user.getEmpid(),UserType.ATTENDEE);
 		}
 		return flag;
 	}
-	public Boolean addAttendee(Integer sessionId, User user)
-	throws SessionNotAvailableException {
-		return(persistent.addAttendee(sessionId, user));
+	public Boolean assignAdmin(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException
+	{
+		return(persistent.addUserToSession(sessionId, userId,UserType.ADMIN));
+	}
+	public Boolean addAttendee(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException
+	{
+		return(persistent.addUserToSession(sessionId, userId,UserType.ATTENDEE));
+	}
+	public Boolean addFacilitator(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException
+	{
+		return(persistent.addUserToSession(sessionId, userId,UserType.FACILITATOR));
 	}
 
 	public Integer addMessage(Integer sessionId, Message message)
@@ -52,45 +67,40 @@ public class EasyShareServicesProxy implements EasyShareServices {
 			 return messageId;	
 	}
 
-	public Integer addResource(Integer sessionId, Resource resource)
+	public Integer addResource(Integer sessionId, String resourceName,String url)
 	throws SessionNotAvailableException
 	{
 		Integer resourceId;
+		Resource resource=new Resource();
+		resource.setResourceName(resourceName);
+		resource.setUrl(url);
 		resourceId=persistent.saveNewResource(sessionId,resource);
 		return resourceId;
 		
 	}
 	
-	public Integer addAppointment(Integer sessionId, Appointment appointment)
+	public Integer addAppointment(Integer sessionId, String date,String fromTime,String toTime)
 	throws SessionNotAvailableException
 	{
 		Integer appointmentId;
-		
-		appointmentId=persistent.saveNewAppointment(sessionId,appointment);
+		Appointment newAppointment=new Appointment();
+		newAppointment.setDate(date);
+		newAppointment.setFromTime(fromTime);
+		newAppointment.setToTime(toTime);
+		appointmentId=persistent.saveNewAppointment(sessionId,newAppointment);
 			 return appointmentId;	
 	}
-
-	public Boolean addUserToSession(Integer sessionId, Integer userId,
-			UserType userType) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException
+	
+	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
+	throws SessionNotAvailableException,
+	AppointmentNotAvailableException
 	{
-
-			User user=persistent.getUser(userId,userType);
-			
-			if(userType.equals(UserType.FACILITATOR))
-			{
-				return(persistent.addFacilitator(sessionId,user));
-			}
-			if(userType.equals(UserType.ATTENDEE))
-			{
-				return(persistent.addAttendee(sessionId,user));
-			}
-			return Boolean.FALSE;
-			
-		
-		
+		return(persistent.removeAppointment(sessionId, appointmentId));  
 	}
 
-	public Session createSession(String sessionName,
+	
+
+	public Integer createSession(String sessionName,
 			Set<Appointment> appointments) throws DuplicateSessionException {
 		Session newSession = new Session();
 		newSession.setSessionName(sessionName);
@@ -100,7 +110,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		}
 		Integer sessionId = persistent.saveNewSession(newSession);
 		newSession.setSessionId(sessionId);
-		return newSession;
+		return sessionId;
 	}
 
 	public Boolean designateUser(User user, UserType userType) throws PresentAsSameUserTypeException {
@@ -108,10 +118,6 @@ public class EasyShareServicesProxy implements EasyShareServices {
 			if(persistent.checkForDuplicacy(user, userType))
 			{
 				throw new PresentAsSameUserTypeException("User already present in the store as same UserType");
-			}
-			else
-			{
-				user.setUserType(userType);
 			}
 		
 		return(persistent.promoteUser(user, userType));
@@ -166,9 +172,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	public Boolean removeResource(Integer sessionId, Integer resourceId) throws SessionNotAvailableException {
 		return(persistent.removeResource(sessionId, resourceId));
 		}
-	public Boolean removeMessage(Integer sessionId, Integer messageId) throws SessionNotAvailableException {
-		return(persistent.removeMessage(sessionId, messageId));
-		}
+	
 	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException {
 		return(persistent.removeAttendee(sessionId, attendeeId));
 		}

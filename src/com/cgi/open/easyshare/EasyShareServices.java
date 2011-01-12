@@ -35,34 +35,24 @@ public interface EasyShareServices {
 	 * @param appointments
 	 * @return
 	 */
-	public Session createSession(String sessionName, 
+	public Integer createSession(String sessionName, 
 			Set<Appointment> appointments) throws DuplicateSessionException;
 	
 	/**
-	 * The service adds/edits/removes appointments to an
-	 * existing session. The set should be mapped one to
-	 * one with the existing appointments to decide whether
-	 * a new appointment is added or an existing appointment
-	 * is edited or deleted. Atleast one appointment should remain.
+	 * The service adds appointment to an
+	 * existing session. 
 	 * @param sessionId
-	 * @param appointments
+	 * @param appointment
 	 * @return
+	 * @throws SessionNotAvailableException 
 	 */
-	public Set<Appointment> saveAppointments(Integer sessionId, 
-			Set<Appointment> appointments);
+	public Integer addAppointment(Integer sessionId, 
+			String date,String fromDate,String toDate) throws SessionNotAvailableException;
+	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
+	throws SessionNotAvailableException,
+	AppointmentNotAvailableException;
 	
-	/**
-	 * The service adds the user (ADMIN or FACILITATOR) to an
-	 * existing session.
-	 * @param sessionId
-	 * @param userId
-	 * @param userType
-	 * @return
-	 * @throws PresentAsOtherUserTypeException 
-	 * @throws UserNotAvailableException 
-	 */
-	public Boolean addUserToSession(Integer sessionId, 
-			Integer userId, UserType userType)throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException;
+	public Boolean addFacilitator(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException;
 	
 	/**
 	 * The service removes a facilitator from an existing session. 
@@ -82,12 +72,18 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @param attendees
 	 * @return
+	 * @throws AdminAssignedException 
+	 * @throws AttendeeAlreadyRegisteredException 
+	 * @throws UserNotAvailableException 
+	 * @throws PresentAsOtherUserTypeException 
 	 */
 	public Boolean addAttendees(Integer sessionId, 
-			Set<User> attendees) throws SessionNotAvailableException;
-	public Boolean addAttendee(Integer sessionId, User user)
-	throws SessionNotAvailableException;
+			Set<User> attendees) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException;
+	public Boolean assignAdmin(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException;
+	public Boolean addAttendee(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException;
+	
 	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException ;
+	
 	
 	/**
 	 * The service adds a resource to the resource pool 
@@ -97,7 +93,7 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public Integer addResource(Integer sessionId, 
-			Resource resource)throws SessionNotAvailableException;
+			String resourceName,String url)throws SessionNotAvailableException;
 	
 	/**
 	 * The service removes a resource to the resource pool 
@@ -118,7 +114,8 @@ public interface EasyShareServices {
 	 */
 	public Integer addMessage(Integer sessionId, 
 			Message message)throws SessionNotAvailableException;
-	public Boolean removeMessage(Integer sessionId, Integer messageId) throws SessionNotAvailableException ;
+	
+	
 	
 	/**
 	 * The service gets the details of an existing session.
@@ -167,6 +164,6 @@ public interface EasyShareServices {
 	 */
 	public Set<Session> getAllSessions();
 	public Map<UserType,Set<Session>> getMySessions(User anyUser);
-	public Integer addAppointment(Integer sessionId, Appointment appointment)
-	throws SessionNotAvailableException;
+	
+	
 }

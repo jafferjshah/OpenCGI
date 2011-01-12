@@ -2,7 +2,9 @@ package com.cgi.open.persist;
 
 import java.util.Set;
 
+import com.cgi.open.easyshare.AdminAssignedException;
 import com.cgi.open.easyshare.AppointmentNotAvailableException;
+import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.SessionNotAvailableException;
 import com.cgi.open.easyshare.UserNotAvailableException;
@@ -33,6 +35,10 @@ public interface PersistenceServices {
 	public Resource getResource(Integer sessionId,Integer id) throws SessionNotAvailableException;
 	public Message getMessage(Integer sessionId,Integer id) throws SessionNotAvailableException ;
 
+	public Boolean addUserToSession(Integer sessionId, Integer userId,
+			UserType userType) throws SessionNotAvailableException,
+			PresentAsOtherUserTypeException, UserNotAvailableException,
+			AttendeeAlreadyRegisteredException, AdminAssignedException;
 	public Boolean checkForDuplicacy(Session anySession);
 	public Boolean checkForDuplicacy(Integer sessionId,
 			Appointment anyAppoinment) throws SessionNotAvailableException;
@@ -59,20 +65,12 @@ public interface PersistenceServices {
 	
 
 	
-	public Boolean addAttendee(Integer sessionId, User user)
-			throws SessionNotAvailableException;
 	
-
 	
-	public Boolean addAdmin(Integer sessionId, User user)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException;
 	public Boolean replaceAdmin(Integer sessionId, User user)
 	throws SessionNotAvailableException,
 	PresentAsOtherUserTypeException;
-	public Boolean addFacilitator(Integer sessionId, User user)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException;
+	
 
 	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId)
 			throws SessionNotAvailableException;
@@ -91,7 +89,5 @@ public Boolean removeAttendee(Integer sessionId, String userEmailId)
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
 			throws SessionNotAvailableException,
 			AppointmentNotAvailableException;
-	public boolean removeMessage(Integer sessionId, Integer messageId)
-			throws SessionNotAvailableException;
-			
+				
 }
