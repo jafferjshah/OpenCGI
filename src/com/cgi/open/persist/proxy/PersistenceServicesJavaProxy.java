@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.cgi.open.easyshare.AdminAssignedException;
 import com.cgi.open.easyshare.AppointmentNotAvailableException;
+import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.SessionNotAvailableException;
 import com.cgi.open.easyshare.UserNotAvailableException;
@@ -296,6 +298,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		sessionsStore.add(newSession);
 		return (maxId + 1);
 	}
+
 	/**
 	 * saves an appointment to the set of appointments of the session.
 	 * 
@@ -317,13 +320,13 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		thisSession.getAppointments().add(newAppoinment);
 		return maxId + 1;
 	}
+
 	/**
 	 *saves message to the list of messages of the session.
 	 * 
 	 * @param message
 	 * @throws SessionNotAvailableException
 	 */
-	
 
 	public Integer saveNewMessage(Integer sessionId, Message newMessage)
 			throws SessionNotAvailableException {
@@ -339,6 +342,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		thisSession.getMessages().add(newMessage);
 		return maxId + 1;
 	}
+
 	/**
 	 * This method adds resource to the resourcepool of the corresponding
 	 * session
@@ -370,41 +374,43 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 
 	}
 
-	public Boolean addAdmin(Integer sessionId, User user)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException {
+
+	public Boolean addUserToSession(Integer sessionId, Integer userId,
+			UserType userType) throws SessionNotAvailableException,
+			PresentAsOtherUserTypeException, UserNotAvailableException,
+			AttendeeAlreadyRegisteredException, AdminAssignedException {
 		Session thisSession = getSession(sessionId);
-
-		if (thisSession.getAdmin() == null) {
-			user.setUserType(UserType.ADMIN);
-
-			thisSession.setAdmin(user);
-			return Boolean.TRUE;
+		User user;
+		if (userType.equals(UserType.ATTENDEE)) {
+			for (User user1 : thisSession.getAttendees()) {
+				if (user1.getEmpid() == userId) {
+					throw new AttendeeAlreadyRegisteredException(
+							"the user has already registered for the session");
+				}
+			}
+			user = new User();
+			user.setEmpid(userId);
+			user.setEmail(userId + "@cgi.com");
+			return (thisSession.getAttendees().add(user));
+		}
+		if (userType.equals(UserType.FACILITATOR)) {
+			user = getUser(userId, userType);
+			user.setUserType(UserType.FACILITATOR);
+			return (thisSession.getFacilitators().add(user));
+		}
+		if (userType.equals(UserType.ADMIN)) {
+			user = getUser(userId, userType);
+			if (thisSession.getAdmin() == null) {
+				user.setUserType(UserType.ADMIN);
+				thisSession.setAdmin(user);
+				return Boolean.TRUE;
+			} else
+				throw new AdminAssignedException(
+						"Admin is already assigned for the session");
 		}
 		return Boolean.FALSE;
-	}
-
-	public Boolean addFacilitator(Integer sessionId, User user)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException {
-		Session thisSession = getSession(sessionId);
-		user.setUserType(UserType.FACILITATOR);
-		return (thisSession.getFacilitators().add(user));
 
 	}
-
-	public Boolean addAttendee(Integer sessionId, User user)
-			throws SessionNotAvailableException {
-
-		Session thisSession = getSession(sessionId);
-		user.setUserType(UserType.ATTENDEE);
-		thisSession.getAttendees().add(user);
-		return Boolean.TRUE;
-
-	}
-
-
-	
 
 	public Boolean promoteUser(User anyUser, UserType userType) {
 		if (userType.equals(UserType.ADMIN)
@@ -480,10 +486,6 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 				appointmentId)));
 	}
 
-	public boolean removeMessage(Integer sessionId, Integer messageId)
-			throws SessionNotAvailableException {
-		Session thisSession = getSession(sessionId);
-		return (thisSession.getMessages().remove(getMessage(sessionId,
-				messageId)));
-	}
+	
+
 }
