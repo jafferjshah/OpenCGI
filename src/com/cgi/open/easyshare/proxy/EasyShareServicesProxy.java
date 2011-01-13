@@ -10,10 +10,13 @@ import com.cgi.open.ServicesMapper;
 import com.cgi.open.easyshare.AdminAssignedException;
 import com.cgi.open.easyshare.AppointmentNotAvailableException;
 import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
+import com.cgi.open.easyshare.AttendeeNotFoundException;
 import com.cgi.open.easyshare.DuplicateSessionException;
 import com.cgi.open.easyshare.EasyShareServices;
+import com.cgi.open.easyshare.FacilitatorNotFoundException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.PresentAsSameUserTypeException;
+import com.cgi.open.easyshare.ResourceNotFoundException;
 import com.cgi.open.easyshare.SessionNotAvailableException;
 import com.cgi.open.easyshare.UserNotAvailableException;
 import com.cgi.open.easyshare.model.Appointment;
@@ -58,11 +61,13 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return(persistent.addUserToSession(sessionId, userId,UserType.FACILITATOR));
 	}
 
-	public Integer addMessage(Integer sessionId, Message message)
+	public Integer addMessage(Integer sessionId, String subject,String text)
 	throws SessionNotAvailableException
 	{
 		Integer messageId;
-		
+				Message message=new Message();
+				message.setSubject(subject);
+				message.setText(text);
 			 messageId=persistent.saveNewMessage(sessionId,message);
 			 return messageId;	
 	}
@@ -100,11 +105,9 @@ public class EasyShareServicesProxy implements EasyShareServices {
 
 	
 
-	public Integer createSession(String sessionName,
-			Set<Appointment> appointments) throws DuplicateSessionException {
+	public Integer createSession(String sessionName) throws DuplicateSessionException {
 		Session newSession = new Session();
 		newSession.setSessionName(sessionName);
-		newSession.setAppointments(appointments);
 		if(persistent.checkForDuplicacy(newSession)) {
 			throw new DuplicateSessionException("Session with the given details already present");
 		}
@@ -164,18 +167,26 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return(persistent.getUsers(sessionId, userType));
 	}
 
-	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId) throws SessionNotAvailableException {
+	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId) throws SessionNotAvailableException, FacilitatorNotFoundException {
 		
 		return(persistent.removeFacilitator(sessionId, facilitatorId));
 	}
 
-	public Boolean removeResource(Integer sessionId, Integer resourceId) throws SessionNotAvailableException {
+	public Boolean removeResource(Integer sessionId, Integer resourceId) throws SessionNotAvailableException, ResourceNotFoundException {
 		return(persistent.removeResource(sessionId, resourceId));
 		}
 	
-	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException {
+	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException, AttendeeNotFoundException {
 		return(persistent.removeAttendee(sessionId, attendeeId));
 		}
+	public Boolean replaceAdmin(Integer sessionId, Integer userId)
+	throws SessionNotAvailableException,
+	PresentAsOtherUserTypeException, UserNotAvailableException{
+		
+		User user=persistent.getUser(userId, UserType.ADMIN);
+		return(persistent.replaceAdmin(sessionId, user));
+	
+	}
 		
 		
 	

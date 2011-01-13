@@ -47,8 +47,8 @@ public class User {
 		return sb.toString();
 	}
 	public int hashCode() {
-		int hash = getEmpid().hashCode()+getUserType().hashCode();
-		//System.out.println(this + " hashCode called : " + hash);
+		int hash = this.getEmpid().hashCode()+this.getUserType().hashCode();
+		System.out.println(this + " hashCode called : " + hash);
 		return hash;
 	}
 	public boolean equals(Object obj) {

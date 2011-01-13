@@ -35,8 +35,7 @@ public interface EasyShareServices {
 	 * @param appointments
 	 * @return
 	 */
-	public Integer createSession(String sessionName, 
-			Set<Appointment> appointments) throws DuplicateSessionException;
+	public Integer createSession(String sessionName) throws DuplicateSessionException;
 	
 	/**
 	 * The service adds appointment to an
@@ -61,9 +60,10 @@ public interface EasyShareServices {
 	 * @param facilitatorId
 	 * @return
 	 * @throws SessionNotAvailableException 
+	 * @throws FacilitatorNotFoundException 
 	 */
 	public Boolean removeFacilitator(Integer sessionId, 
-			Integer facilitatorId) throws SessionNotAvailableException;
+			Integer facilitatorId) throws SessionNotAvailableException, FacilitatorNotFoundException;
 	
 	
 	/**
@@ -80,9 +80,12 @@ public interface EasyShareServices {
 	public Boolean addAttendees(Integer sessionId, 
 			Set<User> attendees) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException;
 	public Boolean assignAdmin(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException;
+	public Boolean replaceAdmin(Integer sessionId, Integer userId)
+	throws SessionNotAvailableException,
+	PresentAsOtherUserTypeException, UserNotAvailableException;
 	public Boolean addAttendee(Integer sessionId,Integer userId) throws SessionNotAvailableException, PresentAsOtherUserTypeException, UserNotAvailableException, AttendeeAlreadyRegisteredException, AdminAssignedException;
 	
-	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException ;
+	public Boolean removeAttendee(Integer sessionId, Integer attendeeId) throws SessionNotAvailableException, AttendeeNotFoundException ;
 	
 	
 	/**
@@ -102,9 +105,10 @@ public interface EasyShareServices {
 	 * @param resourceId
 	 * @return
 	 * @throws SessionNotAvailableException 
+	 * @throws ResourceNotFoundException 
 	 */
 	public Boolean removeResource(Integer sessionId, 
-			Integer resourceId) throws SessionNotAvailableException;
+			Integer resourceId) throws SessionNotAvailableException, ResourceNotFoundException;
 	
 	/**
 	 * The service adds a message to an existing session.
@@ -112,8 +116,8 @@ public interface EasyShareServices {
 	 * @param message
 	 * @return
 	 */
-	public Integer addMessage(Integer sessionId, 
-			Message message)throws SessionNotAvailableException;
+	public Integer addMessage(Integer sessionId, String subject,String text)
+	throws SessionNotAvailableException;
 	
 	
 	

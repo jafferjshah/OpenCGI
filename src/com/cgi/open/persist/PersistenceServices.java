@@ -5,7 +5,11 @@ import java.util.Set;
 import com.cgi.open.easyshare.AdminAssignedException;
 import com.cgi.open.easyshare.AppointmentNotAvailableException;
 import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
+import com.cgi.open.easyshare.AttendeeNotFoundException;
+import com.cgi.open.easyshare.FacilitatorNotFoundException;
+import com.cgi.open.easyshare.MessageNotFoundException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
+import com.cgi.open.easyshare.ResourceNotFoundException;
 import com.cgi.open.easyshare.SessionNotAvailableException;
 import com.cgi.open.easyshare.UserNotAvailableException;
 import com.cgi.open.easyshare.model.Appointment;
@@ -28,12 +32,12 @@ public interface PersistenceServices {
 	public Appointment getAppointment(Integer sessionId, Integer appointmentId)
 	throws AppointmentNotAvailableException,
 	SessionNotAvailableException;
-	public User getAttendee(Integer sessionId,Integer id) throws SessionNotAvailableException;
-	public User getAttendee(Integer sessionId,String emailId) throws SessionNotAvailableException;
-	public User getFacilitator(Integer sessionId,Integer id) throws SessionNotAvailableException;
-	public User getFacilitator(Integer sessionId,String emailId) throws SessionNotAvailableException;
-	public Resource getResource(Integer sessionId,Integer id) throws SessionNotAvailableException;
-	public Message getMessage(Integer sessionId,Integer id) throws SessionNotAvailableException ;
+	public User getAttendee(Integer sessionId,Integer id) throws SessionNotAvailableException, AttendeeNotFoundException;
+	public User getAttendee(Integer sessionId,String emailId) throws SessionNotAvailableException, AttendeeNotFoundException;
+	public User getFacilitator(Integer sessionId,Integer id) throws SessionNotAvailableException, FacilitatorNotFoundException;
+	public User getFacilitator(Integer sessionId,String emailId) throws SessionNotAvailableException, FacilitatorNotFoundException;
+	public Resource getResource(Integer sessionId,Integer id) throws SessionNotAvailableException, ResourceNotFoundException;
+	public Message getMessage(Integer sessionId,Integer id) throws SessionNotAvailableException, MessageNotFoundException ;
 
 	public Boolean addUserToSession(Integer sessionId, Integer userId,
 			UserType userType) throws SessionNotAvailableException,
@@ -73,19 +77,19 @@ public interface PersistenceServices {
 	
 
 	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId)
-			throws SessionNotAvailableException;
+			throws SessionNotAvailableException, FacilitatorNotFoundException;
 
 	public Boolean removeFacilitator(Integer sessionId, String userEmailId)
-			throws SessionNotAvailableException;
+			throws SessionNotAvailableException, FacilitatorNotFoundException;
 	
 	public Boolean removeAttendee(Integer sessionId, Integer userEmpId)
-	throws SessionNotAvailableException;
+	throws SessionNotAvailableException, AttendeeNotFoundException;
 
 public Boolean removeAttendee(Integer sessionId, String userEmailId)
-	throws SessionNotAvailableException;
+	throws SessionNotAvailableException, AttendeeNotFoundException;
 
 	public Boolean removeResource(Integer sessionId, Integer resourceId) 
-			throws SessionNotAvailableException;
+			throws SessionNotAvailableException, ResourceNotFoundException;
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
 			throws SessionNotAvailableException,
 			AppointmentNotAvailableException;
