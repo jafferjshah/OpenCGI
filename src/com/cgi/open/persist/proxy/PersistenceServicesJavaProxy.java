@@ -223,7 +223,10 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		return Boolean.FALSE;
 	}
 
-	public Boolean checkForDuplicacy(User anyUser, UserType userType) {
+	public Boolean checkForDuplicacy(Integer userId, UserType userType) {
+		User anyUser=new User();
+		anyUser.setEmpid(userId);
+		anyUser.setUserType(userType);
 		for (User user : usersStore) {
 			if (user.equals(anyUser)) {
 				return Boolean.TRUE;
@@ -425,9 +428,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 
 	}
 
-	public Boolean promoteUser(User anyUser, UserType userType) {
+	public Boolean promoteUser(Integer userId, UserType userType) {
 		if (userType.equals(UserType.ADMIN)
 				|| userType.equals(UserType.FACILITATOR)) {
+			User anyUser=new User();
+			anyUser.setEmpid(userId);
 			anyUser.setUserType(userType);
 			usersStore.add(anyUser);
 			return Boolean.TRUE;

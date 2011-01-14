@@ -116,14 +116,14 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return sessionId;
 	}
 
-	public Boolean designateUser(User user, UserType userType) throws PresentAsSameUserTypeException {
+	public Boolean designateUser(Integer userId, UserType userType) throws PresentAsSameUserTypeException {
 		
-			if(persistent.checkForDuplicacy(user, userType))
+			if(persistent.checkForDuplicacy(userId, userType))
 			{
 				throw new PresentAsSameUserTypeException("User already present in the store as same UserType");
 			}
 		
-		return(persistent.promoteUser(user, userType));
+		return(persistent.promoteUser(userId, userType));
 	}
 
 	public Set<Session> getAllSessions() 
@@ -202,30 +202,30 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	 * 
 	 * Coded by Sanjana
 	 */
-	public Map<UserType,Set<Session>> getMySessions(User anyUser)
+	public Map<UserType,Set<Session>> getMySessions(Integer userId)
 	{
 		Map<UserType, Set<Session>> mySessions = new HashMap<UserType, Set<Session>>();
 		Set<Session> adminSessions=new HashSet<Session>();
 		Set<Session> facilitatorSessions=new HashSet<Session>();
 		Set<Session> attendeeSessions=new HashSet<Session>();
 		
-		if(persistent.checkForDuplicacy(anyUser,UserType.ADMIN))
+		if(persistent.checkForDuplicacy(userId,UserType.ADMIN))
 		{
 			for(Session thisSession:getAllSessions())
 			{
-				if(thisSession.getAdmin().getEmpid()==anyUser.getEmpid())
+				if(thisSession.getAdmin().getEmpid()==userId)
 				{
 					adminSessions.add(thisSession);
 				}
 			}
 		}
-		if(persistent.checkForDuplicacy(anyUser,UserType.FACILITATOR))
+		if(persistent.checkForDuplicacy(userId,UserType.FACILITATOR))
 		{
 			for(Session thisSession:getAllSessions())
 			{
 				for(User thisFacilitator:thisSession.getFacilitators())
 				{
-					if(thisFacilitator.getEmpid()==anyUser.getEmpid())
+					if(thisFacilitator.getEmpid()==userId)
 					{
 						facilitatorSessions.add(thisSession);
 					}
@@ -233,13 +233,13 @@ public class EasyShareServicesProxy implements EasyShareServices {
 			}
 			
 		}
-		if(persistent.checkForDuplicacy(anyUser,UserType.ATTENDEE))
+		if(persistent.checkForDuplicacy(userId,UserType.ATTENDEE))
 		{
 			for(Session thisSession:getAllSessions())
 			{
 				for(User thisAttendee:thisSession.getAttendees())
 				{
-					if(thisAttendee.getEmpid()==anyUser.getEmpid())
+					if(thisAttendee.getEmpid()==userId)
 					{
 						attendeeSessions.add(thisSession);
 					}

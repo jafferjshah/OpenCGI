@@ -170,7 +170,8 @@ public class Session
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb
-				.append(sessionId);
+		.append(sessionName)		
+		.append(sessionId);
 		for(Appointment appObj : getAppointments()) {
 			sb
 				.append(appObj)

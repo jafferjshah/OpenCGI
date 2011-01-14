@@ -25,7 +25,7 @@ public interface EasyShareServices {
 	 * @return
 	 * @throws PresentAsSameUserTypeException 
 	 */
-	public Boolean designateUser(User user, 
+	public Boolean designateUser(Integer userId, 
 			UserType userType) throws PresentAsSameUserTypeException;
 	
 	/**
@@ -167,7 +167,7 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public Set<Session> getAllSessions();
-	public Map<UserType,Set<Session>> getMySessions(User anyUser);
+	public Map<UserType,Set<Session>> getMySessions(Integer userId);
 	
 	
 }

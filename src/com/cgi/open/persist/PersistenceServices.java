@@ -46,7 +46,7 @@ public interface PersistenceServices {
 	public Boolean checkForDuplicacy(Session anySession);
 	public Boolean checkForDuplicacy(Integer sessionId,
 			Appointment anyAppoinment) throws SessionNotAvailableException;
-	public Boolean checkForDuplicacy(User anyUser, UserType userType);
+	public Boolean checkForDuplicacy(Integer userId, UserType userType);
 	public Boolean checkForDuplicacy(Integer sessionId, User anyUser,
 			UserType userType) throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException;
@@ -64,7 +64,7 @@ public interface PersistenceServices {
 
 	
 
-	public Boolean promoteUser(User anyUser, UserType userType);
+	public Boolean promoteUser(Integer userId, UserType userType);
 
 	
 
