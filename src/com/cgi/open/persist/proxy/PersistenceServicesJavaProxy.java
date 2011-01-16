@@ -52,7 +52,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	public Set<User> getUsers(Integer sessionId, UserType userType)
 			throws SessionNotAvailableException {
 		Session thisSession = getSession(sessionId);
-		Set<User> users = null;
+		Set<User> users = new HashSet<User>();
 		if (userType.equals(UserType.ADMIN)) {
 			users.add(thisSession.getAdmin());
 		} else if (userType.equals(UserType.ATTENDEE)) {
@@ -101,7 +101,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 			}
 		}
 		throw new AttendeeNotFoundException("Attendee not found");
-		
+
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 *            id
 	 * @return
 	 * @throws SessionNotAvailableException
-	 * @throws AttendeeNotFoundException 
+	 * @throws AttendeeNotFoundException
 	 */
 	public User getAttendee(Integer sessionId, String emailId)
 			throws SessionNotAvailableException, AttendeeNotFoundException {
@@ -153,7 +153,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 			}
 		}
 		throw new FacilitatorNotFoundException("Facilitator not found");
-		
+
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * @param name
 	 * @return
 	 * @throws SessionNotAvailableException
-	 * @throws ResourceNotFoundException 
+	 * @throws ResourceNotFoundException
 	 */
 	public Resource getResource(Integer sessionId, Integer id)
 			throws SessionNotAvailableException, ResourceNotFoundException {
@@ -186,7 +186,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * @param name
 	 * @return
 	 * @throws SessionNotAvailableException
-	 * @throws MessageNotFoundException 
+	 * @throws MessageNotFoundException
 	 */
 	public Message getMessage(Integer sessionId, Integer id)
 			throws SessionNotAvailableException, MessageNotFoundException {
@@ -200,7 +200,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 			}
 		}
 		throw new MessageNotFoundException("Message Not Found");
-		
+
 	}
 
 	public Boolean checkForDuplicacy(Session anySession) {
@@ -224,7 +224,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public Boolean checkForDuplicacy(Integer userId, UserType userType) {
-		User anyUser=new User();
+		User anyUser = new User();
 		anyUser.setEmpid(userId);
 		anyUser.setUserType(userType);
 		for (User user : usersStore) {
@@ -387,13 +387,12 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 
 	}
 
-
 	public Boolean addUserToSession(Integer sessionId, Integer userId,
 			UserType userType) throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException {
 		Session thisSession = getSession(sessionId);
-		
+
 		if (userType.equals(UserType.ATTENDEE)) {
 			System.out.println("h1");
 			for (User user1 : thisSession.getAttendees()) {
@@ -431,7 +430,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	public Boolean promoteUser(Integer userId, UserType userType) {
 		if (userType.equals(UserType.ADMIN)
 				|| userType.equals(UserType.FACILITATOR)) {
-			User anyUser=new User();
+			User anyUser = new User();
 			anyUser.setEmpid(userId);
 			anyUser.setUserType(userType);
 			usersStore.add(anyUser);
@@ -462,7 +461,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * @param id
 	 * @return
 	 * @throws SessionNotAvailableException
-	 * @throws FacilitatorNotFoundException 
+	 * @throws FacilitatorNotFoundException
 	 */
 
 	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId)
@@ -505,6 +504,21 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 				appointmentId)));
 	}
 
-	
+	public Set<Integer> getSessionUserIds(Integer sessionId)
+			throws SessionNotAvailableException {
+		Session thisSession = getSession(sessionId);
+		Set<Integer> userIds = new HashSet<Integer>();
+		// UserType:ADMIN
+		userIds.add(thisSession.getAdmin().getEmpid());
+		// UserType:FACILITATOR
+		for (User facilitator : thisSession.getFacilitators()) {
+			userIds.add(facilitator.getEmpid());
+		}
+		// UserType:ATTENDEE
+		for (User attendee : thisSession.getAttendees()) {
+			userIds.add(attendee.getEmpid());
+		}
+		return userIds;
+	}
 
 }
