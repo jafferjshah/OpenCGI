@@ -32,6 +32,8 @@ public class EasyShareServicesProxy implements EasyShareServices {
 
 	private PersistenceServices persistent = ServicesMapper
 			.getPersistenceServicesProxyInstance();
+	private UserIntegration uint = ServicesMapper
+			.getUserIntegrationProxyInstance();
 
 	/**
 	 * This method will be called only at the first time. For altering, the
@@ -42,39 +44,39 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	 * @throws UserNotAvailableException
 	 * @throws PresentAsOtherUserTypeException
 	 */
-	public Boolean addAttendees(Integer sessionId, Set<User> attendees)
+	public Boolean addAttendees(Integer sessionId, Set<String> attendeesEmail)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException {
 		Boolean flag = Boolean.TRUE;
-		for (User user : attendees) {
+		for (String userEmail : attendeesEmail) {
 			flag = flag
-					&& persistent.addUserToSession(sessionId, user.getEmpid(),
+					&& persistent.addUserToSession(sessionId, userEmail,
 							UserType.ATTENDEE);
 		}
 		return flag;
 	}
 
-	public Boolean assignAdmin(Integer sessionId, Integer userId)
+	public Boolean assignAdmin(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException {
-		return (persistent.addUserToSession(sessionId, userId, UserType.ADMIN));
+		return (persistent.addUserToSession(sessionId, email, UserType.ADMIN));
 	}
 
-	public Boolean addAttendee(Integer sessionId, Integer userId)
+	public Boolean addAttendee(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException {
-		return (persistent.addUserToSession(sessionId, userId,
+		return (persistent.addUserToSession(sessionId, email,
 				UserType.ATTENDEE));
 	}
 
-	public Boolean addFacilitator(Integer sessionId, Integer userId)
+	public Boolean addFacilitator(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException {
-		return (persistent.addUserToSession(sessionId, userId,
+		return (persistent.addUserToSession(sessionId, email,
 				UserType.FACILITATOR));
 	}
 
@@ -130,15 +132,15 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return sessionId;
 	}
 
-	public Boolean designateUser(Integer userId, UserType userType)
-			throws PresentAsSameUserTypeException {
+	public Boolean designateUser(String email, UserType userType)
+			throws PresentAsSameUserTypeException, UserNotAvailableException {
 
-		if (persistent.checkForDuplicacy(userId, userType)) {
+		if (persistent.checkForDuplicacy(email, userType)) {
 			throw new PresentAsSameUserTypeException(
 					"User already present in the store as same UserType");
 		}
 
-		return (persistent.promoteUser(userId, userType));
+		return (persistent.promoteUser(email, userType));
 	}
 
 	public Set<Session> getAllSessions() {
@@ -171,9 +173,9 @@ public class EasyShareServicesProxy implements EasyShareServices {
 
 	}
 
-	public User getUser(Integer userId, UserType userType)
+	public User getUser(String email, UserType userType)
 			throws UserNotAvailableException {
-		User user = persistent.getUser(userId, userType);
+		User user = persistent.getUser(email, userType);
 		return user;
 	}
 
@@ -198,11 +200,11 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return (persistent.removeAttendee(sessionId, attendeeId));
 	}
 
-	public Boolean replaceAdmin(Integer sessionId, Integer userId)
+	public Boolean replaceAdmin(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException {
 
-		User user = persistent.getUser(userId, UserType.ADMIN);
+		User user = persistent.getUser(email, UserType.ADMIN);
 		return (persistent.replaceAdmin(sessionId, user));
 
 	}
@@ -217,33 +219,33 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	 * 
 	 * Coded by Sanjana
 	 */
-	public Map<UserType, Set<Session>> getMySessions(Integer userId) {
+	public Map<UserType, Set<Session>> getMySessions(String email) {
 		Map<UserType, Set<Session>> mySessions = new HashMap<UserType, Set<Session>>();
 		Set<Session> adminSessions = new HashSet<Session>();
 		Set<Session> facilitatorSessions = new HashSet<Session>();
 		Set<Session> attendeeSessions = new HashSet<Session>();
 
-		if (persistent.checkForDuplicacy(userId, UserType.ADMIN)) {
+		if (persistent.checkForDuplicacy(email, UserType.ADMIN)) {
 			for (Session thisSession : getAllSessions()) {
-				if (thisSession.getAdmin().getEmpid() == userId) {
+				if (thisSession.getAdmin().getEmail().equals(email)) {
 					adminSessions.add(thisSession);
 				}
 			}
 		}
-		if (persistent.checkForDuplicacy(userId, UserType.FACILITATOR)) {
+		if (persistent.checkForDuplicacy(email, UserType.FACILITATOR)) {
 			for (Session thisSession : getAllSessions()) {
 				for (User thisFacilitator : thisSession.getFacilitators()) {
-					if (thisFacilitator.getEmpid() == userId) {
+					if (thisFacilitator.getEmail().equals(email)) {
 						facilitatorSessions.add(thisSession);
 					}
 				}
 			}
 
 		}
-		if (persistent.checkForDuplicacy(userId, UserType.ATTENDEE)) {
+		if (persistent.checkForDuplicacy(email, UserType.ATTENDEE)) {
 			for (Session thisSession : getAllSessions()) {
 				for (User thisAttendee : thisSession.getAttendees()) {
-					if (thisAttendee.getEmpid() == userId) {
+					if (thisAttendee.getEmail().equals(email)) {
 						attendeeSessions.add(thisSession);
 					}
 				}
@@ -257,9 +259,9 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return mySessions;
 	}
 
-	public Set<Integer> getAllUsersLight(Integer sessionId)
+	public Set<String> getAllUsersLight(Integer sessionId)
 			throws SessionNotAvailableException {
-		Set<Integer> userIds = persistent.getSessionUserIds(sessionId);
-		return userIds;
+		Set<String> userEmails = persistent.getSessionUserEmails(sessionId);
+		return userEmails;
 	}
 }

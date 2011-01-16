@@ -19,6 +19,7 @@ import com.cgi.open.easyshare.PresentAsSameUserTypeException;
 import com.cgi.open.easyshare.ResourceNotFoundException;
 import com.cgi.open.easyshare.SessionNotAvailableException;
 import com.cgi.open.easyshare.UserNotAvailableException;
+import com.cgi.open.easyshare.UserTypeNotValidException;
 import com.cgi.open.external.UserIntegration;
 import com.cgi.open.userconcerns.SeparationOfUserConcerns;
 import com.cgi.open.userconcerns.model.ServiceDef;
@@ -40,6 +41,10 @@ public class TestMain {
 	 */
 	/**
 	 * @param args
+	 * @throws SessionNotAvailableException
+	 * @throws UserTypeNotValidException
+	 * @throws UserNotAvailableException
+	 * @throws PresentAsSameUserTypeException
 	 * @throws DuplicateSessionException
 	 * @throws SessionNotAvailableException
 	 * @throws PresentAsOtherUserTypeException
@@ -51,8 +56,10 @@ public class TestMain {
 	 * @throws AttendeeNotFoundException
 	 * @throws ResourceNotFoundException
 	 */
-	public static void main(String[] args) {
-
+	public static void main(String[] args)
+			throws PresentAsSameUserTypeException, UserNotAvailableException,
+			UserTypeNotValidException, SessionNotAvailableException {
+		jafferTest();
 	}
 
 	public static void sanjanaTest() throws DuplicateSessionException,
@@ -77,25 +84,25 @@ public class TestMain {
 		 * user2.setName("Jaffer"); user3.setEmail("safiya@cgi.com");
 		 * user3.setEmpid(2500); user3.setName("safiya");
 		 */
-		service.designateUser(1000, UserType.ADMIN);
-		service.designateUser(1200, UserType.ADMIN);
-		service.designateUser(1500, UserType.FACILITATOR);
+		service.designateUser("", UserType.ADMIN);
+		service.designateUser("", UserType.ADMIN);
+		service.designateUser("", UserType.FACILITATOR);
 
-		userRef = service.getUser(1000, UserType.ADMIN);
+		userRef = service.getUser("", UserType.ADMIN);
 
 		Integer sessionId1 = service.createSession("advanced Hibernate");
 		Session session1 = service.getSession(sessionId1);
 		service.addAppointment(sessionId1, "17/01/2011", "1600", "1800");
 		service.addAppointment(sessionId1, "18/01/2011", "1600", "1800");
-		service.assignAdmin(sessionId1, 1000);
-		service.addFacilitator(sessionId1, 1500);
+		service.assignAdmin(sessionId1, "");
+		service.addFacilitator(sessionId1, "");
 		service.addMessage(sessionId1, "hello", "welcome");
 		service.addMessage(sessionId1, "babye", "good night!!");
 		List<Message> mlist = service.getMessages(sessionId1);
 		service.addResource(sessionId1, "resourceName1", "url1");
 		service.addResource(sessionId1, "resourceName2", "url2");
 
-		service.addAttendee(sessionId1, 2500);
+		service.addAttendee(sessionId1, "");
 		Set<Resource> rset = service.getResources(sessionId1);
 
 		// System.out.println(session1);
@@ -106,24 +113,31 @@ public class TestMain {
 		// service.removeFacilitator(sessionId1, 1500);
 		// service.removeAttendee(sessionId1, 2500);
 		Integer sessionId2 = service.createSession("Advanced Java");
-		service.assignAdmin(sessionId2, 1200);
+		service.assignAdmin(sessionId2, "");
 		service.addAppointment(sessionId2, "20/01/2011", "1500", "1700");
 		service.addAppointment(sessionId2, "21/01/2011", "1500", "1700");
 		service.addAppointment(sessionId2, "23/01/2011", "1500", "1700");
-		service.addFacilitator(sessionId2, 1500);
+		service.addFacilitator(sessionId2, "");
 		// System.out.println(session1);
-		Map<UserType, Set<Session>> sessions = service.getMySessions(1200);
+		Map<UserType, Set<Session>> sessions = service.getMySessions("");
 		System.out.println(sessions);
 	}
 
-	public static void jafferTest() {
-		UserIntegration uint = ServicesMapper
-				.getUserIntegrationProxyInstance();
+	public static void jafferTest() throws PresentAsSameUserTypeException,
+			UserNotAvailableException, UserTypeNotValidException,
+			SessionNotAvailableException {
+		UserIntegration uint = ServicesMapper.getUserIntegrationProxyInstance();
 		EasyShareServices easy = ServicesMapper
 				.getEasyShareServicesProxyInstance();
-		SeparationOfUserConcerns sepa = ServicesMapper
+		easy.designateUser("jaffer.shah", UserType.ADMIN);
+		SeparationOfUserConcerns sp = ServicesMapper
 				.getSeparationOfUserConcernsProxyInstance();
 		ServiceDef sd = new ServiceDef();
 		sd.setServiceName("createSession");
+		Set<String> elig = new HashSet<String>();
+		elig.add("ADMIN");
+		sd.setEligUserTypes(elig);
+		sd.setSessionRelationExists(Boolean.TRUE);
+		System.out.println(sp.isServReqValid(sd, "jaffer.shah", null));
 	}
 }

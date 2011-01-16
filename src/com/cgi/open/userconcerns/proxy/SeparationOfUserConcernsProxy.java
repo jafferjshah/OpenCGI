@@ -17,7 +17,7 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 	 * @param serviceDef
 	 * @throws SessionNotAvailableException
 	 */
-	public Boolean isServReqValid(ServiceDef _serviceDef, Integer _userId,
+	public Boolean isServReqValid(ServiceDef _serviceDef, String _email,
 			Integer _sessionId) 
 	throws UserTypeNotValidException, SessionNotAvailableException {
 		EasyShareServices easyShare = ServicesMapper
@@ -27,7 +27,7 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 		 */
 		Boolean validUserType = Boolean.TRUE;
 		Boolean validSessionAccess = Boolean.TRUE;
-		if (_userId == null) {
+		if (_email == null) {
 			/*
 			 * User is needed for any service to be accessed.
 			 */
@@ -39,7 +39,7 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 				if (uType.equals(UserType.ADMIN)
 						|| uType.equals(UserType.FACILITATOR)) {
 					try {
-						easyShare.getUser(_userId, uType);
+						easyShare.getUser(_email, uType);
 						validUserType = Boolean.TRUE;
 						break;
 					} catch (UserNotAvailableException ex) {
@@ -69,8 +69,8 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 				return Boolean.FALSE;
 			} 
 			else {
-				Set<Integer> userIds = easyShare.getAllUsersLight(_sessionId);
-				validSessionAccess = userIds.contains(_userId);
+				Set<String> userEmails = easyShare.getAllUsersLight(_sessionId);
+				validSessionAccess = userEmails.contains(_email);
 			}
 		}
 		return (validUserType && validSessionAccess);

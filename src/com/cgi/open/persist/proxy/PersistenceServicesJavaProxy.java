@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.cgi.open.ServicesMapper;
 import com.cgi.open.easyshare.AdminAssignedException;
 import com.cgi.open.easyshare.AppointmentNotAvailableException;
 import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
@@ -20,6 +21,8 @@ import com.cgi.open.easyshare.model.Resource;
 import com.cgi.open.easyshare.model.Session;
 import com.cgi.open.easyshare.model.User;
 import com.cgi.open.easyshare.model.UserType;
+import com.cgi.open.external.UserEntity;
+import com.cgi.open.external.UserIntegration;
 import com.cgi.open.persist.PersistenceServices;
 
 public class PersistenceServicesJavaProxy implements PersistenceServices {
@@ -36,11 +39,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		return usersStore;
 	}
 
-	public User getUser(Integer userId, UserType userType)
+	public User getUser(String email, UserType userType)
 			throws UserNotAvailableException {
 		Set<User> users = getUsersStore();
 		for (User user : users) {
-			if (user.getEmpid().equals(userId)) {
+			if (user.getEmail().equals(email)) {
 				if (user.getUserType().equals(userType)) {
 					return user;
 				}
@@ -223,9 +226,9 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		return Boolean.FALSE;
 	}
 
-	public Boolean checkForDuplicacy(Integer userId, UserType userType) {
+	public Boolean checkForDuplicacy(String email, UserType userType) {
 		User anyUser = new User();
-		anyUser.setEmpid(userId);
+		anyUser.setEmail(email);
 		anyUser.setUserType(userType);
 		for (User user : usersStore) {
 			if (user.equals(anyUser)) {
@@ -387,7 +390,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 
 	}
 
-	public Boolean addUserToSession(Integer sessionId, Integer userId,
+	public Boolean addUserToSession(Integer sessionId, String email,
 			UserType userType) throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException {
@@ -396,25 +399,25 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		if (userType.equals(UserType.ATTENDEE)) {
 			System.out.println("h1");
 			for (User user1 : thisSession.getAttendees()) {
-				if (user1.getEmpid() == userId) {
+				if (user1.getEmail().equals(email)) {
 					System.out.println("h2");
 					throw new AttendeeAlreadyRegisteredException(
 							"the user has already registered for the session");
 				}
 			}
-			User user = new User();
-			user.setEmpid(userId);
-			user.setEmail(userId + "@cgi.com");
+			UserIntegration uint = ServicesMapper
+					.getUserIntegrationProxyInstance();
+			User user = uint.getActualUser(email, UserEntity.EMAIL);
 			user.setUserType(UserType.ATTENDEE);
 			return (thisSession.getAttendees().add(user));
 		}
 		if (userType.equals(UserType.FACILITATOR)) {
-			User user = getUser(userId, userType);
+			User user = getUser(email, userType);
 			user.setUserType(UserType.FACILITATOR);
 			return (thisSession.getFacilitators().add(user));
 		}
 		if (userType.equals(UserType.ADMIN)) {
-			User user = getUser(userId, userType);
+			User user = getUser(email, userType);
 			if (thisSession.getAdmin() == null) {
 				user.setUserType(UserType.ADMIN);
 				thisSession.setAdmin(user);
@@ -427,11 +430,13 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 
 	}
 
-	public Boolean promoteUser(Integer userId, UserType userType) {
+	public Boolean promoteUser(String email, UserType userType) 
+			throws UserNotAvailableException {
 		if (userType.equals(UserType.ADMIN)
 				|| userType.equals(UserType.FACILITATOR)) {
-			User anyUser = new User();
-			anyUser.setEmpid(userId);
+			UserIntegration uint = ServicesMapper
+					.getUserIntegrationProxyInstance();
+			User anyUser = uint.getActualUser(email, UserEntity.EMAIL);
 			anyUser.setUserType(userType);
 			usersStore.add(anyUser);
 			return Boolean.TRUE;
@@ -504,19 +509,19 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 				appointmentId)));
 	}
 
-	public Set<Integer> getSessionUserIds(Integer sessionId)
+	public Set<String> getSessionUserEmails(Integer sessionId)
 			throws SessionNotAvailableException {
 		Session thisSession = getSession(sessionId);
-		Set<Integer> userIds = new HashSet<Integer>();
+		Set<String> userIds = new HashSet<String>();
 		// UserType:ADMIN
-		userIds.add(thisSession.getAdmin().getEmpid());
+		userIds.add(thisSession.getAdmin().getEmail());
 		// UserType:FACILITATOR
 		for (User facilitator : thisSession.getFacilitators()) {
-			userIds.add(facilitator.getEmpid());
+			userIds.add(facilitator.getEmail());
 		}
 		// UserType:ATTENDEE
 		for (User attendee : thisSession.getAttendees()) {
-			userIds.add(attendee.getEmpid());
+			userIds.add(attendee.getEmail());
 		}
 		return userIds;
 	}

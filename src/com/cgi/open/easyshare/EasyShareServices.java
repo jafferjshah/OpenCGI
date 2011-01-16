@@ -26,8 +26,8 @@ public interface EasyShareServices {
 	 * @return
 	 * @throws PresentAsSameUserTypeException
 	 */
-	public Boolean designateUser(Integer userId, UserType userType)
-			throws PresentAsSameUserTypeException;
+	public Boolean designateUser(String email, UserType userType)
+			throws PresentAsSameUserTypeException, UserNotAvailableException;
 
 	/**
 	 * The service creates a session with the provided sessionName and
@@ -55,7 +55,7 @@ public interface EasyShareServices {
 			throws SessionNotAvailableException,
 			AppointmentNotAvailableException;
 
-	public Boolean addFacilitator(Integer sessionId, Integer userId)
+	public Boolean addFacilitator(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException;
@@ -84,21 +84,21 @@ public interface EasyShareServices {
 	 * @throws UserNotAvailableException
 	 * @throws PresentAsOtherUserTypeException
 	 */
-	public Boolean addAttendees(Integer sessionId, Set<User> attendees)
+	public Boolean addAttendees(Integer sessionId, Set<String> attendeesEmail)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException;
 
-	public Boolean assignAdmin(Integer sessionId, Integer userId)
+	public Boolean assignAdmin(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException;
 
-	public Boolean replaceAdmin(Integer sessionId, Integer userId)
+	public Boolean replaceAdmin(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException;
 
-	public Boolean addAttendee(Integer sessionId, Integer userId)
+	public Boolean addAttendee(Integer sessionId, String email)
 			throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException;
@@ -186,7 +186,7 @@ public interface EasyShareServices {
 	 * @return
 	 * @throws UserNotAvailableException
 	 */
-	public User getUser(Integer userId, UserType userType)
+	public User getUser(String email, UserType userType)
 			throws UserNotAvailableException;
 
 	/**
@@ -196,8 +196,8 @@ public interface EasyShareServices {
 	 */
 	public Set<Session> getAllSessions();
 
-	public Map<UserType, Set<Session>> getMySessions(Integer userId);
+	public Map<UserType, Set<Session>> getMySessions(String email);
 
-	public Set<Integer> getAllUsersLight(Integer sessionId)
+	public Set<String> getAllUsersLight(Integer sessionId)
 			throws SessionNotAvailableException;
 }

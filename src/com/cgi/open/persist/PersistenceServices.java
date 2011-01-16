@@ -24,7 +24,7 @@ public interface PersistenceServices {
 
 	public Set<User> getUsersStore();
 
-	public User getUser(Integer userId, UserType userType)
+	public User getUser(String email, UserType userType)
 			throws UserNotAvailableException;
 
 	public Set<User> getUsers(Integer sessionId, UserType userType)
@@ -55,7 +55,7 @@ public interface PersistenceServices {
 	public Message getMessage(Integer sessionId, Integer id)
 			throws SessionNotAvailableException, MessageNotFoundException;
 
-	public Boolean addUserToSession(Integer sessionId, Integer userId,
+	public Boolean addUserToSession(Integer sessionId, String email,
 			UserType userType) throws SessionNotAvailableException,
 			PresentAsOtherUserTypeException, UserNotAvailableException,
 			AttendeeAlreadyRegisteredException, AdminAssignedException;
@@ -65,7 +65,7 @@ public interface PersistenceServices {
 	public Boolean checkForDuplicacy(Integer sessionId,
 			Appointment anyAppoinment) throws SessionNotAvailableException;
 
-	public Boolean checkForDuplicacy(Integer userId, UserType userType);
+	public Boolean checkForDuplicacy(String email, UserType userType);
 
 	public Boolean checkForDuplicacy(Integer sessionId, User anyUser,
 			UserType userType) throws SessionNotAvailableException,
@@ -85,7 +85,8 @@ public interface PersistenceServices {
 	public Boolean deleteSession(Integer sessionId)
 			throws SessionNotAvailableException;
 
-	public Boolean promoteUser(Integer userId, UserType userType);
+	public Boolean promoteUser(String email, UserType userType)
+			throws UserNotAvailableException;
 
 	public Boolean replaceAdmin(Integer sessionId, User user)
 			throws SessionNotAvailableException,
@@ -110,6 +111,6 @@ public interface PersistenceServices {
 			throws SessionNotAvailableException,
 			AppointmentNotAvailableException;
 
-	public Set<Integer> getSessionUserIds(Integer sessionId)
+	public Set<String> getSessionUserEmails(Integer sessionId)
 			throws SessionNotAvailableException;
 }

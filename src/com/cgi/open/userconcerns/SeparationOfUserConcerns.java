@@ -15,7 +15,7 @@ public interface SeparationOfUserConcerns {
 	 * @param userType
 	 * @return Boolean.TRUE if valid, Boolean.FALSE otherwise
 	 */
-	public Boolean isServReqValid(ServiceDef serviceDef, Integer userId,
+	public Boolean isServReqValid(ServiceDef serviceDef, String email,
 			Integer sessionId) 
 	throws UserTypeNotValidException, SessionNotAvailableException;
 }
