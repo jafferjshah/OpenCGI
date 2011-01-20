@@ -130,6 +130,7 @@ public class TestMain {
 		EasyShareServices easy = ServicesMapper
 				.getEasyShareServicesProxyInstance();
 		easy.designateUser("jaffer.shah", UserType.ADMIN);
+		System.out.println(easy.getUser("jaffer.shah", UserType.ADMIN));
 		SeparationOfUserConcerns sp = ServicesMapper
 				.getSeparationOfUserConcernsProxyInstance();
 		ServiceDef sd = new ServiceDef();
