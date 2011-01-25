@@ -1,6 +1,6 @@
 package com.cgi.open.external.proxy;
 
-import com.cgi.open.easyshare.UserNotAvailableException;
+import com.cgi.open.easyshare.UserNotFoundException;
 import com.cgi.open.easyshare.model.User;
 import com.cgi.open.external.UserEntity;
 import com.cgi.open.external.UserIntegration;
@@ -8,7 +8,7 @@ import com.cgi.open.external.UserIntegration;
 public class UserIntegrationJavaProxy implements UserIntegration {
 
 	public User getActualUser(String param, UserEntity entity)
-			throws UserNotAvailableException {
+			throws UserNotFoundException {
 		User user = null;
 		if(entity.equals(UserEntity.EMAIL)) {
 			//param = jaffer.shah
@@ -27,6 +27,6 @@ public class UserIntegrationJavaProxy implements UserIntegration {
 			user.setName("DUMMY " + param);
 			return user;
 		}
-		throw new UserNotAvailableException();
+		throw new UserNotFoundException();
 	}
 }

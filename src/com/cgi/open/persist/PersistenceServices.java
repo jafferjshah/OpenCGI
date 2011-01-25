@@ -3,15 +3,15 @@ package com.cgi.open.persist;
 import java.util.Set;
 
 import com.cgi.open.easyshare.AdminAssignedException;
-import com.cgi.open.easyshare.AppointmentNotAvailableException;
-import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
+import com.cgi.open.easyshare.AppointmentNotFoundException;
 import com.cgi.open.easyshare.AttendeeNotFoundException;
 import com.cgi.open.easyshare.FacilitatorNotFoundException;
 import com.cgi.open.easyshare.MessageNotFoundException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
+import com.cgi.open.easyshare.PresentAsSameUserTypeException;
 import com.cgi.open.easyshare.ResourceNotFoundException;
-import com.cgi.open.easyshare.SessionNotAvailableException;
-import com.cgi.open.easyshare.UserNotAvailableException;
+import com.cgi.open.easyshare.SessionNotFoundException;
+import com.cgi.open.easyshare.UserNotFoundException;
 import com.cgi.open.easyshare.model.Appointment;
 import com.cgi.open.easyshare.model.Message;
 import com.cgi.open.easyshare.model.Resource;
@@ -25,92 +25,87 @@ public interface PersistenceServices {
 	public Set<User> getUsersStore();
 
 	public User getUser(String email, UserType userType)
-			throws UserNotAvailableException;
+			throws UserNotFoundException;
 
 	public Set<User> getUsers(Integer sessionId, UserType userType)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	public Session getSession(Integer sessionId)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	public Appointment getAppointment(Integer sessionId, Integer appointmentId)
-			throws AppointmentNotAvailableException,
-			SessionNotAvailableException;
+			throws AppointmentNotFoundException,
+			SessionNotFoundException;
 
 	public User getAttendee(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, AttendeeNotFoundException;
+			throws SessionNotFoundException, AttendeeNotFoundException;
 
 	public User getAttendee(Integer sessionId, String emailId)
-			throws SessionNotAvailableException, AttendeeNotFoundException;
+			throws SessionNotFoundException, AttendeeNotFoundException;
 
 	public User getFacilitator(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, FacilitatorNotFoundException;
+			throws SessionNotFoundException, FacilitatorNotFoundException;
 
 	public User getFacilitator(Integer sessionId, String emailId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException;
+			throws SessionNotFoundException, FacilitatorNotFoundException;
 
 	public Resource getResource(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, ResourceNotFoundException;
+			throws SessionNotFoundException, ResourceNotFoundException;
 
 	public Message getMessage(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, MessageNotFoundException;
+			throws SessionNotFoundException, MessageNotFoundException;
 
-	public Boolean addUserToSession(Integer sessionId, String email,
-			UserType userType) throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException;
+	public Boolean addUserToSession(Integer sessionId, User user) throws SessionNotFoundException;
+			 
 
 	public Boolean checkForDuplicacy(Session anySession);
 
 	public Boolean checkForDuplicacy(Integer sessionId,
-			Appointment anyAppoinment) throws SessionNotAvailableException;
+			Appointment anyAppoinment) throws SessionNotFoundException;
+	
+	public Boolean checkForDuplicacy(Integer sessionId,
+			Resource anyResource) throws SessionNotFoundException;
 
 	public Boolean checkForDuplicacy(String email, UserType userType);
 
 	public Boolean checkForDuplicacy(Integer sessionId, User anyUser,
-			UserType userType) throws SessionNotAvailableException,
+			UserType userType) throws SessionNotFoundException,
 			PresentAsOtherUserTypeException;
 
 	public Integer saveNewSession(Session newSession);
 
 	public Integer saveNewAppointment(Integer sessionId,
-			Appointment anyAppoinment) throws SessionNotAvailableException;
+			Appointment anyAppoinment) throws SessionNotFoundException;
 
 	public Integer saveNewMessage(Integer sessionId, Message newMessage)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	public Integer saveNewResource(Integer sessionId, Resource newResource)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	public Boolean deleteSession(Integer sessionId)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	public Boolean promoteUser(String email, UserType userType)
-			throws UserNotAvailableException;
+			throws UserNotFoundException;
 
 	public Boolean replaceAdmin(Integer sessionId, User user)
-			throws SessionNotAvailableException,
+			throws SessionNotFoundException,
 			PresentAsOtherUserTypeException;
 
-	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException;
-
 	public Boolean removeFacilitator(Integer sessionId, String userEmailId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException;
-
-	public Boolean removeAttendee(Integer sessionId, Integer userEmpId)
-			throws SessionNotAvailableException, AttendeeNotFoundException;
+			throws SessionNotFoundException, FacilitatorNotFoundException;
 
 	public Boolean removeAttendee(Integer sessionId, String userEmailId)
-			throws SessionNotAvailableException, AttendeeNotFoundException;
+			throws SessionNotFoundException, AttendeeNotFoundException;
 
 	public Boolean removeResource(Integer sessionId, Integer resourceId)
-			throws SessionNotAvailableException, ResourceNotFoundException;
+			throws SessionNotFoundException, ResourceNotFoundException;
 
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
-			throws SessionNotAvailableException,
-			AppointmentNotAvailableException;
+			throws SessionNotFoundException,
+			AppointmentNotFoundException;
 
-	public Set<String> getSessionUserEmails(Integer sessionId)
-			throws SessionNotAvailableException;
+	public Set<String> getSessionUserEmails(Integer sessionId,UserType userType)
+			throws SessionNotFoundException;
 }

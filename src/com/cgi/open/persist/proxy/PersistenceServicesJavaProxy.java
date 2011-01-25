@@ -6,15 +6,14 @@ import java.util.Set;
 
 import com.cgi.open.ServicesMapper;
 import com.cgi.open.easyshare.AdminAssignedException;
-import com.cgi.open.easyshare.AppointmentNotAvailableException;
-import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
+import com.cgi.open.easyshare.AppointmentNotFoundException;
 import com.cgi.open.easyshare.AttendeeNotFoundException;
 import com.cgi.open.easyshare.FacilitatorNotFoundException;
 import com.cgi.open.easyshare.MessageNotFoundException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.ResourceNotFoundException;
-import com.cgi.open.easyshare.SessionNotAvailableException;
-import com.cgi.open.easyshare.UserNotAvailableException;
+import com.cgi.open.easyshare.SessionNotFoundException;
+import com.cgi.open.easyshare.UserNotFoundException;
 import com.cgi.open.easyshare.model.Appointment;
 import com.cgi.open.easyshare.model.Message;
 import com.cgi.open.easyshare.model.Resource;
@@ -40,7 +39,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public User getUser(String email, UserType userType)
-			throws UserNotAvailableException {
+			throws UserNotFoundException {
 		Set<User> users = getUsersStore();
 		for (User user : users) {
 			if (user.getEmail().equals(email)) {
@@ -49,11 +48,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 				}
 			}
 		}
-		throw new UserNotAvailableException("User with given ID not available");
+		throw new UserNotFoundException("User with given ID not available");
 	}
 
 	public Set<User> getUsers(Integer sessionId, UserType userType)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		Session thisSession = getSession(sessionId);
 		Set<User> users = new HashSet<User>();
 		if (userType.equals(UserType.ADMIN)) {
@@ -68,32 +67,32 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public Session getSession(Integer sessionId)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		for (Session session : sessionsStore) {
 			if (session.getSessionId().equals(sessionId)) {
 				return session;
 			}
 		}
-		throw new SessionNotAvailableException(
+		throw new SessionNotFoundException(
 				"Session with given ID not available");
 	}
 
 	public Appointment getAppointment(Integer sessionId, Integer appointmentId)
-			throws AppointmentNotAvailableException,
-			SessionNotAvailableException {
+			throws AppointmentNotFoundException,
+			SessionNotFoundException {
 		Session thisSession = getSession(sessionId);
 		for (Appointment appointment : thisSession.getAppointments()) {
 			if (appointment.getAppointmentId().equals(appointmentId)) {
 				return appointment;
 			}
 		}
-		throw new AppointmentNotAvailableException(
+		throw new AppointmentNotFoundException(
 				"Appointment with given ID for the session "
 						+ thisSession.getSessionId() + " not available");
 	}
 
 	public User getAttendee(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, AttendeeNotFoundException {
+			throws SessionNotFoundException, AttendeeNotFoundException {
 		Session thisSession = getSession(sessionId);
 		User result = null;
 		Set<User> attendees = thisSession.getAttendees();
@@ -113,11 +112,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * @param email
 	 *            id
 	 * @return
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 * @throws AttendeeNotFoundException
 	 */
 	public User getAttendee(Integer sessionId, String emailId)
-			throws SessionNotAvailableException, AttendeeNotFoundException {
+			throws SessionNotFoundException, AttendeeNotFoundException {
 		Session thisSession = getSession(sessionId);
 		User result = null;
 		Set<User> attendees = thisSession.getAttendees();
@@ -131,7 +130,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public User getFacilitator(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, FacilitatorNotFoundException {
+			throws SessionNotFoundException, FacilitatorNotFoundException {
 		Session thisSession = getSession(sessionId);
 		User result = null;
 		Set<User> facilitators = thisSession.getFacilitators();
@@ -145,13 +144,13 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public User getFacilitator(Integer sessionId, String emailId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException {
+			throws SessionNotFoundException, FacilitatorNotFoundException {
 		Session thisSession = getSession(sessionId);
 		User result = null;
 		Set<User> facilitators = thisSession.getFacilitators();
 		for (Iterator<User> it = facilitators.iterator(); it.hasNext();) {
 			result = it.next();
-			if (result.getEmpid().equals(emailId)) {
+			if (result.getEmail().equals(emailId)) {
 				return result;
 			}
 		}
@@ -165,17 +164,17 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 * @throws ResourceNotFoundException
 	 */
 	public Resource getResource(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, ResourceNotFoundException {
+			throws SessionNotFoundException, ResourceNotFoundException {
 		Session thisSession = getSession(sessionId);
 		Resource result = null;
 		for (Iterator<Resource> it = thisSession.getResourcePool().iterator(); it
 				.hasNext();) {
 			result = it.next();
-			if (result.getResourceId() == id) {
+			if (result.getResourceId().equals(id)) {
 				return result;
 			}
 		}
@@ -188,11 +187,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 * @throws MessageNotFoundException
 	 */
 	public Message getMessage(Integer sessionId, Integer id)
-			throws SessionNotAvailableException, MessageNotFoundException {
+			throws SessionNotFoundException, MessageNotFoundException {
 		Session thisSession = getSession(sessionId);
 		Message result = null;
 		for (Iterator<Message> it = thisSession.getMessages().iterator(); it
@@ -216,10 +215,21 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public Boolean checkForDuplicacy(Integer sessionId,
-			Appointment anyAppoinment) throws SessionNotAvailableException {
+			Appointment anyAppoinment) throws SessionNotFoundException {
 		Session thisSession = getSession(sessionId);
 		for (Appointment appointment : thisSession.getAppointments()) {
 			if (appointment.equals(anyAppoinment)) {
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	public Boolean checkForDuplicacy(Integer sessionId,
+			Resource anyResource) throws SessionNotFoundException {
+		Session thisSession = getSession(sessionId);
+		for (Resource resource : thisSession.getResourcePool()) {
+			if (resource.equals(anyResource)) {
 				return Boolean.TRUE;
 			}
 		}
@@ -239,7 +249,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public Boolean checkForDuplicacy(Integer sessionId, User anyUser,
-			UserType userType) throws SessionNotAvailableException,
+			UserType userType) throws SessionNotFoundException,
 			PresentAsOtherUserTypeException {
 
 		Session thisSession = getSession(sessionId);
@@ -319,11 +329,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * saves an appointment to the set of appointments of the session.
 	 * 
 	 * @param appointment
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 */
 
 	public Integer saveNewAppointment(Integer sessionId,
-			Appointment newAppoinment) throws SessionNotAvailableException {
+			Appointment newAppoinment) throws SessionNotFoundException {
 		Session thisSession = getSession(sessionId);
 		Integer maxId = 0;
 		for (Appointment appointment : thisSession.getAppointments()) {
@@ -341,11 +351,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 *saves message to the list of messages of the session.
 	 * 
 	 * @param message
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 */
 
 	public Integer saveNewMessage(Integer sessionId, Message newMessage)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		Session thisSession = getSession(sessionId);
 		Integer maxId = 0;
 		for (Message message : thisSession.getMessages()) {
@@ -364,11 +374,11 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	 * session
 	 * 
 	 * @param resource
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 */
 
 	public Integer saveNewResource(Integer sessionId, Resource newResource)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		Session thisSession = getSession(sessionId);
 		Integer maxId = 0;
 		for (Resource resource : thisSession.getResourcePool()) {
@@ -383,55 +393,34 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public Boolean deleteSession(Integer sessionId)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		Session thisSession;
 		thisSession = getSession(sessionId);
 		return (sessionsStore.remove(thisSession));
 
 	}
 
-	public Boolean addUserToSession(Integer sessionId, String email,
-			UserType userType) throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException {
+	public Boolean addUserToSession(Integer sessionId, User user) throws SessionNotFoundException
+			{
 		Session thisSession = getSession(sessionId);
-
-		if (userType.equals(UserType.ATTENDEE)) {
-			System.out.println("h1");
-			for (User user1 : thisSession.getAttendees()) {
-				if (user1.getEmail().equals(email)) {
-					System.out.println("h2");
-					throw new AttendeeAlreadyRegisteredException(
-							"the user has already registered for the session");
-				}
-			}
-			UserIntegration uint = ServicesMapper
-					.getUserIntegrationProxyInstance();
-			User user = uint.getActualUser(email, UserEntity.EMAIL);
-			user.setUserType(UserType.ATTENDEE);
+		if (user.getUserType().equals(UserType.ATTENDEE)){
 			return (thisSession.getAttendees().add(user));
 		}
-		if (userType.equals(UserType.FACILITATOR)) {
-			User user = getUser(email, userType);
-			user.setUserType(UserType.FACILITATOR);
+		if (user.getUserType().equals(UserType.FACILITATOR)) {
+
 			return (thisSession.getFacilitators().add(user));
 		}
-		if (userType.equals(UserType.ADMIN)) {
-			User user = getUser(email, userType);
-			if (thisSession.getAdmin() == null) {
-				user.setUserType(UserType.ADMIN);
+		if (user.getUserType().equals(UserType.ADMIN)) {
+			
 				thisSession.setAdmin(user);
 				return Boolean.TRUE;
-			} else
-				throw new AdminAssignedException(
-						"Admin is already assigned for the session");
-		}
+			} 
 		return Boolean.FALSE;
 
 	}
 
 	public Boolean promoteUser(String email, UserType userType) 
-			throws UserNotAvailableException {
+			throws UserNotFoundException {
 		if (userType.equals(UserType.ADMIN)
 				|| userType.equals(UserType.FACILITATOR)) {
 			UserIntegration uint = ServicesMapper
@@ -444,47 +433,27 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 		return Boolean.FALSE;
 	}
 
-	public Boolean removeAttendee(Integer sessionId, Integer userEmpId)
-			throws SessionNotAvailableException, AttendeeNotFoundException {
-		Session thisSession = getSession(sessionId);
-		return (thisSession.getAttendees().remove(getAttendee(sessionId,
-				userEmpId)));
-
-	}
+	
 
 	public Boolean removeAttendee(Integer sessionId, String userEmailId)
-			throws SessionNotAvailableException, AttendeeNotFoundException {
+			throws SessionNotFoundException, AttendeeNotFoundException {
 		Session thisSession = getSession(sessionId);
 		return (thisSession.getAttendees().remove(getAttendee(sessionId,
 				userEmailId)));
 
 	}
 
-	/**
-	 * Gets Attendee from the set based on attendee's id.
-	 * 
-	 * @param id
-	 * @return
-	 * @throws SessionNotAvailableException
-	 * @throws FacilitatorNotFoundException
-	 */
-
-	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException {
-		Session thisSession = getSession(sessionId);
-		return (thisSession.getFacilitators().remove(getFacilitator(sessionId,
-				facilitatorId)));
-	}
+	
 
 	public Boolean removeFacilitator(Integer sessionId, String userEmailId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException {
+			throws SessionNotFoundException, FacilitatorNotFoundException {
 		Session thisSession = getSession(sessionId);
 		return (thisSession.getFacilitators().remove(getFacilitator(sessionId,
 				userEmailId)));
 	}
 
 	public Boolean replaceAdmin(Integer sessionId, User user)
-			throws SessionNotAvailableException,
+			throws SessionNotFoundException,
 			PresentAsOtherUserTypeException {
 		Session thisSession = getSession(sessionId);
 		user.setUserType(UserType.ADMIN);
@@ -493,7 +462,7 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public Boolean removeResource(Integer sessionId, Integer resourceId)
-			throws SessionNotAvailableException, ResourceNotFoundException {
+			throws SessionNotFoundException, ResourceNotFoundException {
 
 		Session thisSession = getSession(sessionId);
 		return (thisSession.getResourcePool().remove(getResource(sessionId,
@@ -502,26 +471,35 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 	}
 
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
-			throws SessionNotAvailableException,
-			AppointmentNotAvailableException {
+			throws SessionNotFoundException,
+			AppointmentNotFoundException {
 		Session thisSession = getSession(sessionId);
 		return (thisSession.getAppointments().remove(getAppointment(sessionId,
 				appointmentId)));
 	}
 
-	public Set<String> getSessionUserEmails(Integer sessionId)
-			throws SessionNotAvailableException {
+	public Set<String> getSessionUserEmails(Integer sessionId,UserType userType)
+			throws SessionNotFoundException {
 		Session thisSession = getSession(sessionId);
 		Set<String> userIds = new HashSet<String>();
 		// UserType:ADMIN
+		if(userType.equals(UserType.ALL)||userType.equals(UserType.ADMIN))
+		{
 		userIds.add(thisSession.getAdmin().getEmail());
+		}
 		// UserType:FACILITATOR
+		if(userType.equals(UserType.ALL)||userType.equals(UserType.FACILITATOR))
+		{
 		for (User facilitator : thisSession.getFacilitators()) {
 			userIds.add(facilitator.getEmail());
 		}
+		}
 		// UserType:ATTENDEE
+		if(userType.equals(UserType.ALL)||userType.equals(UserType.ATTENDEE))
+		{
 		for (User attendee : thisSession.getAttendees()) {
 			userIds.add(attendee.getEmail());
+		}
 		}
 		return userIds;
 	}

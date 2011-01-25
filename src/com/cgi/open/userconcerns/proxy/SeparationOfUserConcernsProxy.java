@@ -4,8 +4,8 @@ import java.util.Set;
 
 import com.cgi.open.ServicesMapper;
 import com.cgi.open.easyshare.EasyShareServices;
-import com.cgi.open.easyshare.SessionNotAvailableException;
-import com.cgi.open.easyshare.UserNotAvailableException;
+import com.cgi.open.easyshare.SessionNotFoundException;
+import com.cgi.open.easyshare.UserNotFoundException;
 import com.cgi.open.easyshare.UserTypeNotValidException;
 import com.cgi.open.easyshare.model.UserType;
 import com.cgi.open.userconcerns.SeparationOfUserConcerns;
@@ -15,11 +15,11 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 	/**
 	 * 
 	 * @param serviceDef
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 */
 	public Boolean isServReqValid(ServiceDef _serviceDef, String _email,
 			Integer _sessionId) 
-	throws UserTypeNotValidException, SessionNotAvailableException {
+	throws UserTypeNotValidException, SessionNotFoundException {
 		EasyShareServices easyShare = ServicesMapper
 				.getEasyShareServicesProxyInstance();
 		/*
@@ -27,6 +27,7 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 		 */
 		Boolean validUserType = Boolean.TRUE;
 		Boolean validSessionAccess = Boolean.TRUE;
+		UserType userType=null;
 		if (_email == null) {
 			/*
 			 * User is needed for any service to be accessed.
@@ -41,14 +42,16 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 					try {
 						easyShare.getUser(_email, uType);
 						validUserType = Boolean.TRUE;
+						userType=uType;
 						break;
-					} catch (UserNotAvailableException ex) {
+					} catch (UserNotFoundException ex) {
 						validUserType = Boolean.FALSE;
 					}
 				}
 				if (uType.equals(UserType.ATTENDEE)
 						|| uType.equals(UserType.ALL)) {
 					validUserType = Boolean.TRUE;
+					userType=uType;
 					break;
 				}
 			}
@@ -56,7 +59,7 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 				return Boolean.FALSE;
 			}
 		}
-		System.out.println("validUserType : " + validUserType);
+		//System.out.println("validUserType : " + validUserType);
 		/*
 		 * Whether the user is valid to access the session
 		 */
@@ -69,7 +72,7 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 				return Boolean.FALSE;
 			} 
 			else {
-				Set<String> userEmails = easyShare.getAllUsersLight(_sessionId);
+				Set<String> userEmails = easyShare.getAllUsersLight(_sessionId,userType);
 				validSessionAccess = userEmails.contains(_email);
 			}
 		}

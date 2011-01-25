@@ -1,6 +1,6 @@
 package com.cgi.open.easyshare;
 
-public class AttendeeNotFoundException extends Exception{
+public class AttendeeNotFoundException extends UserNotFoundException{
 	public AttendeeNotFoundException() {
 		// TODO Auto-generated constructor stub
 	}
