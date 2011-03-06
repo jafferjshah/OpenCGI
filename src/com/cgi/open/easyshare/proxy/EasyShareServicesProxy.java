@@ -15,6 +15,7 @@ import com.cgi.open.easyshare.DuplicateResourceException;
 import com.cgi.open.easyshare.DuplicateSessionException;
 import com.cgi.open.easyshare.EasyShareServices;
 import com.cgi.open.easyshare.FacilitatorNotFoundException;
+import com.cgi.open.easyshare.InvalidPromotionException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.PresentAsSameUserTypeException;
 import com.cgi.open.easyshare.ResourceNotFoundException;
@@ -68,7 +69,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 			throw new AdminAssignedException("Admin already assigned to this session");
 		}
 		User user=persistent.getUser(email, UserType.ADMIN);
-		if(!persistent.checkForDuplicacy(sessionId,user,UserType.ATTENDEE)){
+		if(!persistent.checkForDuplicacy(sessionId,user,UserType.ADMIN)){
 		return (persistent.addUserToSession(sessionId,user));
 	}
 		throw new PresentAsSameUserTypeException("The user is already an admin of this session");
@@ -100,12 +101,15 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		
 	}
 
-	public Integer addMessage(Integer sessionId, String subject, String text)
+	public Integer addMessage(Integer sessionId, String subject, String text,String date,String post_time,String post_by)
 			throws SessionNotFoundException {
 		Integer messageId;
 		Message message = new Message();
 		message.setSubject(subject);
 		message.setText(text);
+		message.setPostDate(date);
+		message.setPostTime(post_time);
+		message.setPostBy(post_by);
 		messageId = persistent.saveNewMessage(sessionId, message);
 		return messageId;
 	}
@@ -124,12 +128,13 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Integer addAppointment(Integer sessionId, String date,
-			String fromTime, String toTime) throws SessionNotFoundException, DuplicateAppointmentException {
+			String fromTime, String toTime,String location) throws SessionNotFoundException, DuplicateAppointmentException {
 		Integer appointmentId;
 		Appointment newAppointment = new Appointment();
 		newAppointment.setDate(date);
 		newAppointment.setFromTime(fromTime);
 		newAppointment.setToTime(toTime);
+		newAppointment.setLocation(location);
 		if(!persistent.checkForDuplicacy(sessionId,newAppointment)){
 		appointmentId = persistent
 				.saveNewAppointment(sessionId, newAppointment);
@@ -144,10 +149,11 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return (persistent.removeAppointment(sessionId, appointmentId));
 	}
 
-	public Integer createSession(String sessionName)
+	public Integer createSession(String sessionName,String description)
 			throws DuplicateSessionException {
 		Session newSession = new Session();
 		newSession.setSessionName(sessionName);
+		newSession.setDiscription(description);
 		if (persistent.checkForDuplicacy(newSession)) {
 			throw new DuplicateSessionException(
 					"Session with the given details already present");
@@ -158,7 +164,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Boolean designateUser(String email, UserType userType)
-			throws PresentAsSameUserTypeException, UserNotFoundException {
+			throws PresentAsSameUserTypeException, UserNotFoundException, InvalidPromotionException {
 
 		if (persistent.checkForDuplicacy(email, userType)) {
 			throw new PresentAsSameUserTypeException(

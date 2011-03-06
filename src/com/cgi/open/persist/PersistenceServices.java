@@ -6,6 +6,7 @@ import com.cgi.open.easyshare.AdminAssignedException;
 import com.cgi.open.easyshare.AppointmentNotFoundException;
 import com.cgi.open.easyshare.AttendeeNotFoundException;
 import com.cgi.open.easyshare.FacilitatorNotFoundException;
+import com.cgi.open.easyshare.InvalidPromotionException;
 import com.cgi.open.easyshare.MessageNotFoundException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.PresentAsSameUserTypeException;
@@ -21,7 +22,7 @@ import com.cgi.open.easyshare.model.UserType;
 
 public interface PersistenceServices {
 	public Set<Session> getSessionsStore();
-
+	
 	public Set<User> getUsersStore();
 
 	public User getUser(String email, UserType userType)
@@ -87,7 +88,7 @@ public interface PersistenceServices {
 			throws SessionNotFoundException;
 
 	public Boolean promoteUser(String email, UserType userType)
-			throws UserNotFoundException;
+			throws UserNotFoundException, InvalidPromotionException;
 
 	public Boolean replaceAdmin(Integer sessionId, User user)
 			throws SessionNotFoundException,
@@ -108,4 +109,6 @@ public interface PersistenceServices {
 
 	public Set<String> getSessionUserEmails(Integer sessionId,UserType userType)
 			throws SessionNotFoundException;
+
+	
 }

@@ -25,19 +25,21 @@ public interface EasyShareServices {
 	 * @param user
 	 * @return
 	 * @throws PresentAsSameUserTypeException
+	 * @throws InvalidPromotionException 
 	 */
 	public Boolean designateUser(String email, UserType userType)
-			throws PresentAsSameUserTypeException, UserNotFoundException;
+			throws PresentAsSameUserTypeException, UserNotFoundException, InvalidPromotionException;
 
 	/**
 	 * The service creates a session with the provided sessionName and
 	 * appointments.
 	 * 
 	 * @param sessionName
+	 * @param description 
 	 * @param appointments
 	 * @return
 	 */
-	public Integer createSession(String sessionName)
+	public Integer createSession(String sessionName, String description)
 			throws DuplicateSessionException;
 
 	/**
@@ -50,7 +52,7 @@ public interface EasyShareServices {
 	 * @throws DuplicateAppointmentException 
 	 */
 	public Integer addAppointment(Integer sessionId, String date,
-			String fromDate, String toDate) throws SessionNotFoundException, DuplicateAppointmentException;
+			String fromDate, String toDate,String location) throws SessionNotFoundException, DuplicateAppointmentException;
 
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
 			throws SessionNotFoundException,
@@ -139,7 +141,7 @@ public interface EasyShareServices {
 	 * @param message
 	 * @return
 	 */
-	public Integer addMessage(Integer sessionId, String subject, String text)
+	public Integer addMessage(Integer sessionId, String subject, String text,String date,String post_time,String post_by)
 			throws SessionNotFoundException;
 
 	/**
