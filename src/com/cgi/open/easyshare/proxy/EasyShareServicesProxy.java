@@ -31,7 +31,7 @@ import com.cgi.open.external.UserIntegration;
 import com.cgi.open.persist.PersistenceServices;
 
 public class EasyShareServicesProxy implements EasyShareServices {
-
+	private final static String ILLEGAL_SERVICE_ACCESS = "";
 	private PersistenceServices persistent = ServicesMapper
 			.getPersistenceServicesProxyInstance();
 	private UserIntegration uint = ServicesMapper
