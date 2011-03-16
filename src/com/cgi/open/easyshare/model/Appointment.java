@@ -33,6 +33,8 @@ public class Appointment {
 	 */
 	private String toTime;
 	
+	private String location;
+	
 	public Appointment() {
 		super();
 	}
@@ -125,6 +127,14 @@ public class Appointment {
 		this.toTime = toTime;
 	}
 	
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 	/**
 	 * The String representation of the Appointment object
 	 * 
@@ -142,6 +152,7 @@ public class Appointment {
 			.append("-")
 			.append(getToTime())
 			.append(")")
+			.append(getLocation())
 		;
 		return sb.toString();
 	}

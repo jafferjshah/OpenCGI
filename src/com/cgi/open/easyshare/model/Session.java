@@ -58,6 +58,8 @@ public class Session
 	 */
 	private Set<Appointment> appointments;
 	
+	private String discription;
+	
 	/**
 	 * Get session name
 	 * @return sessionName
@@ -162,6 +164,14 @@ public class Session
 		this.messages = messages;
 	}
 		
+	public String getDiscription() {
+		return discription;
+	}
+
+	public void setDiscription(String discription) {
+		this.discription = discription;
+	}
+
 	/**
 	 * The String representation of the Session object
 	 * 
