@@ -8,28 +8,31 @@ import java.util.Set;
 
 import com.cgi.open.ServicesMapper;
 import com.cgi.open.easyshare.AdminAssignedException;
-import com.cgi.open.easyshare.AppointmentNotAvailableException;
-import com.cgi.open.easyshare.AttendeeAlreadyRegisteredException;
+import com.cgi.open.easyshare.DuplicateAppointmentException;
+import com.cgi.open.easyshare.AppointmentNotFoundException;
 import com.cgi.open.easyshare.AttendeeNotFoundException;
+import com.cgi.open.easyshare.DuplicateResourceException;
 import com.cgi.open.easyshare.DuplicateSessionException;
 import com.cgi.open.easyshare.EasyShareServices;
 import com.cgi.open.easyshare.FacilitatorNotFoundException;
+import com.cgi.open.easyshare.InvalidPromotionException;
 import com.cgi.open.easyshare.PresentAsOtherUserTypeException;
 import com.cgi.open.easyshare.PresentAsSameUserTypeException;
 import com.cgi.open.easyshare.ResourceNotFoundException;
-import com.cgi.open.easyshare.SessionNotAvailableException;
-import com.cgi.open.easyshare.UserNotAvailableException;
+import com.cgi.open.easyshare.SessionNotFoundException;
+import com.cgi.open.easyshare.UserNotFoundException;
 import com.cgi.open.easyshare.model.Appointment;
 import com.cgi.open.easyshare.model.Message;
 import com.cgi.open.easyshare.model.Resource;
 import com.cgi.open.easyshare.model.Session;
 import com.cgi.open.easyshare.model.User;
 import com.cgi.open.easyshare.model.UserType;
+import com.cgi.open.external.UserEntity;
 import com.cgi.open.external.UserIntegration;
 import com.cgi.open.persist.PersistenceServices;
 
 public class EasyShareServicesProxy implements EasyShareServices {
-
+	private final static String ILLEGAL_SERVICE_ACCESS = "";
 	private PersistenceServices persistent = ServicesMapper
 			.getPersistenceServicesProxyInstance();
 	private UserIntegration uint = ServicesMapper
@@ -41,88 +44,116 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	 * 
 	 * @throws AdminAssignedException
 	 * @throws AttendeeAlreadyRegisteredException
-	 * @throws UserNotAvailableException
+	 * @throws UserNotFoundException
 	 * @throws PresentAsOtherUserTypeException
 	 */
 	public Boolean addAttendees(Integer sessionId, Set<String> attendeesEmail)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException {
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,PresentAsSameUserTypeException
+			 {
 		Boolean flag = Boolean.TRUE;
 		for (String userEmail : attendeesEmail) {
 			flag = flag
-					&& persistent.addUserToSession(sessionId, userEmail,
-							UserType.ATTENDEE);
+					&& addAttendee(sessionId,userEmail);
 		}
 		return flag;
 	}
 
 	public Boolean assignAdmin(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException {
-		return (persistent.addUserToSession(sessionId, email, UserType.ADMIN));
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,
+			AdminAssignedException, PresentAsSameUserTypeException {
+		
+		Session thisSession=persistent.getSession(sessionId);
+		if(thisSession.getAdmin()!=null){
+			throw new AdminAssignedException("Admin already assigned to this session");
+		}
+		User user=persistent.getUser(email, UserType.ADMIN);
+		if(!persistent.checkForDuplicacy(sessionId,user,UserType.ADMIN)){
+		return (persistent.addUserToSession(sessionId,user));
+	}
+		throw new PresentAsSameUserTypeException("The user is already an admin of this session");
 	}
 
 	public Boolean addAttendee(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException {
-		return (persistent.addUserToSession(sessionId, email,
-				UserType.ATTENDEE));
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,
+			PresentAsSameUserTypeException {
+		UserIntegration uint = ServicesMapper
+		.getUserIntegrationProxyInstance();
+		User user = uint.getActualUser(email, UserEntity.EMAIL);
+		user.setUserType(UserType.ATTENDEE);
+		if(!persistent.checkForDuplicacy(sessionId,user,UserType.ATTENDEE)){	
+		return (persistent.addUserToSession(sessionId,user));
+	}
+		throw new PresentAsSameUserTypeException("The user is already an attendee of this session");
 	}
 
 	public Boolean addFacilitator(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException {
-		return (persistent.addUserToSession(sessionId, email,
-				UserType.FACILITATOR));
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,
+			PresentAsSameUserTypeException {
+		User user=persistent.getUser(email, UserType.FACILITATOR);
+		if(!persistent.checkForDuplicacy(sessionId,user,UserType.FACILITATOR)){
+		return (persistent.addUserToSession(sessionId,user));
+		}
+		throw new PresentAsSameUserTypeException("The user is already facilitating the session");
+		
 	}
 
-	public Integer addMessage(Integer sessionId, String subject, String text)
-			throws SessionNotAvailableException {
+	public Integer addMessage(Integer sessionId, String subject, String text,String date,String post_time,String post_by)
+			throws SessionNotFoundException {
 		Integer messageId;
 		Message message = new Message();
 		message.setSubject(subject);
 		message.setText(text);
+		message.setPostDate(date);
+		message.setPostTime(post_time);
+		message.setPostBy(post_by);
 		messageId = persistent.saveNewMessage(sessionId, message);
 		return messageId;
 	}
 
 	public Integer addResource(Integer sessionId, String resourceName,
-			String url) throws SessionNotAvailableException {
+			String url) throws SessionNotFoundException, DuplicateResourceException {
 		Integer resourceId;
 		Resource resource = new Resource();
 		resource.setResourceName(resourceName);
 		resource.setUrl(url);
+		if(!persistent.checkForDuplicacy(sessionId,resource)){
 		resourceId = persistent.saveNewResource(sessionId, resource);
 		return resourceId;
-
+		}
+		throw new DuplicateResourceException("Resource is already added to the pool");
 	}
 
 	public Integer addAppointment(Integer sessionId, String date,
-			String fromTime, String toTime) throws SessionNotAvailableException {
+			String fromTime, String toTime,String location) throws SessionNotFoundException, DuplicateAppointmentException {
 		Integer appointmentId;
 		Appointment newAppointment = new Appointment();
 		newAppointment.setDate(date);
 		newAppointment.setFromTime(fromTime);
 		newAppointment.setToTime(toTime);
+		newAppointment.setLocation(location);
+		if(!persistent.checkForDuplicacy(sessionId,newAppointment)){
 		appointmentId = persistent
 				.saveNewAppointment(sessionId, newAppointment);
 		return appointmentId;
+		}
+		throw new DuplicateAppointmentException("Appointment with the given details is already added");
 	}
 
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
-			throws SessionNotAvailableException,
-			AppointmentNotAvailableException {
+			throws SessionNotFoundException,
+			AppointmentNotFoundException {
 		return (persistent.removeAppointment(sessionId, appointmentId));
 	}
 
-	public Integer createSession(String sessionName)
+	public Integer createSession(String sessionName,String description)
 			throws DuplicateSessionException {
 		Session newSession = new Session();
 		newSession.setSessionName(sessionName);
+		newSession.setDiscription(description);
 		if (persistent.checkForDuplicacy(newSession)) {
 			throw new DuplicateSessionException(
 					"Session with the given details already present");
@@ -133,7 +164,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Boolean designateUser(String email, UserType userType)
-			throws PresentAsSameUserTypeException, UserNotAvailableException {
+			throws PresentAsSameUserTypeException, UserNotFoundException, InvalidPromotionException {
 
 		if (persistent.checkForDuplicacy(email, userType)) {
 			throw new PresentAsSameUserTypeException(
@@ -150,7 +181,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public List<Message> getMessages(Integer sessionId)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		List<Message> messageList;
 		Session thisSession = persistent.getSession(sessionId);
 		messageList = thisSession.getMessages();
@@ -158,7 +189,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Set<Resource> getResources(Integer sessionId)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		Set<Resource> resources;
 		Session thisSession = persistent.getSession(sessionId);
 		resources = thisSession.getResourcePool();
@@ -166,7 +197,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Session getSession(Integer sessionId)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		Session thisSession;
 		thisSession = persistent.getSession(sessionId);
 		return thisSession;
@@ -174,35 +205,35 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public User getUser(String email, UserType userType)
-			throws UserNotAvailableException {
+			throws UserNotFoundException {
 		User user = persistent.getUser(email, userType);
 		return user;
 	}
 
 	public Set<User> getUsers(Integer sessionId, UserType userType)
-			throws SessionNotAvailableException {
+			throws SessionNotFoundException {
 		return (persistent.getUsers(sessionId, userType));
 	}
 
-	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException {
+	public Boolean removeFacilitator(Integer sessionId, String email)
+			throws SessionNotFoundException, UserNotFoundException {
 
-		return (persistent.removeFacilitator(sessionId, facilitatorId));
+		return (persistent.removeFacilitator(sessionId, email));
 	}
 
 	public Boolean removeResource(Integer sessionId, Integer resourceId)
-			throws SessionNotAvailableException, ResourceNotFoundException {
+			throws SessionNotFoundException, ResourceNotFoundException {
 		return (persistent.removeResource(sessionId, resourceId));
 	}
 
-	public Boolean removeAttendee(Integer sessionId, Integer attendeeId)
-			throws SessionNotAvailableException, AttendeeNotFoundException {
-		return (persistent.removeAttendee(sessionId, attendeeId));
+	public Boolean removeAttendee(Integer sessionId, String email)
+			throws SessionNotFoundException, UserNotFoundException {
+		return (persistent.removeAttendee(sessionId, email));
 	}
 
 	public Boolean replaceAdmin(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException {
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException {
 
 		User user = persistent.getUser(email, UserType.ADMIN);
 		return (persistent.replaceAdmin(sessionId, user));
@@ -259,9 +290,9 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return mySessions;
 	}
 
-	public Set<String> getAllUsersLight(Integer sessionId)
-			throws SessionNotAvailableException {
-		Set<String> userEmails = persistent.getSessionUserEmails(sessionId);
+	public Set<String> getAllUsersLight(Integer sessionId,UserType userType)
+			throws SessionNotFoundException {
+		Set<String> userEmails = persistent.getSessionUserEmails(sessionId,userType);
 		return userEmails;
 	}
 }

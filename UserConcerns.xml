@@ -1,0 +1,25 @@
+<ServiceDefinitionGroup>
+  <ServiceDefinition>
+    <serviceName>addResource</serviceName>
+    <eligUserTypes>
+      <string>FACILITATOR</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  <ServiceDefinition>
+    <serviceName>createSession</serviceName>
+    <eligUserTypes>
+      <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>false</sessionRelationExists>
+  </ServiceDefinition>
+  <ServiceDefinition>
+    <serviceName>getMySessions</serviceName>
+    <eligUserTypes>
+      <string>ADMIN</string>
+      <string>FACILITATOR</string>
+      <string>ATTENDEE</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+</ServiceDefinitionGroup>

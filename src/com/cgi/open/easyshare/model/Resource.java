@@ -110,7 +110,7 @@ public class Resource
 			return false;
 		}
 		Resource resObj=(Resource)obj;
-		System.out.println(this + " AND " + resObj + " equals called");
+		//System.out.println(this + " AND " + resObj + " equals called");
 
 		return(this.getUrl().equals(resObj.getUrl()));
 	}

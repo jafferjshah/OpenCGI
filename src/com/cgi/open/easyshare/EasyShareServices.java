@@ -25,19 +25,21 @@ public interface EasyShareServices {
 	 * @param user
 	 * @return
 	 * @throws PresentAsSameUserTypeException
+	 * @throws InvalidPromotionException 
 	 */
 	public Boolean designateUser(String email, UserType userType)
-			throws PresentAsSameUserTypeException, UserNotAvailableException;
+			throws PresentAsSameUserTypeException, UserNotFoundException, InvalidPromotionException;
 
 	/**
 	 * The service creates a session with the provided sessionName and
 	 * appointments.
 	 * 
 	 * @param sessionName
+	 * @param description 
 	 * @param appointments
 	 * @return
 	 */
-	public Integer createSession(String sessionName)
+	public Integer createSession(String sessionName, String description)
 			throws DuplicateSessionException;
 
 	/**
@@ -46,19 +48,20 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @param appointment
 	 * @return
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
+	 * @throws DuplicateAppointmentException 
 	 */
 	public Integer addAppointment(Integer sessionId, String date,
-			String fromDate, String toDate) throws SessionNotAvailableException;
+			String fromDate, String toDate,String location) throws SessionNotFoundException, DuplicateAppointmentException;
 
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
-			throws SessionNotAvailableException,
-			AppointmentNotAvailableException;
+			throws SessionNotFoundException,
+			AppointmentNotFoundException;
 
 	public Boolean addFacilitator(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException;
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,
+			PresentAsSameUserTypeException;
 
 	/**
 	 * The service removes a facilitator from an existing session. Atleast one
@@ -67,11 +70,11 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @param facilitatorId
 	 * @return
-	 * @throws SessionNotAvailableException
-	 * @throws FacilitatorNotFoundException
+	 * @throws SessionNotFoundException
+	 * @throws UserNotFoundException 
 	 */
-	public Boolean removeFacilitator(Integer sessionId, Integer facilitatorId)
-			throws SessionNotAvailableException, FacilitatorNotFoundException;
+	public Boolean removeFacilitator(Integer sessionId,String email )
+			throws SessionNotFoundException, UserNotFoundException;
 
 	/**
 	 * The service adds a set of Users as Attendees to an existing session.
@@ -81,30 +84,30 @@ public interface EasyShareServices {
 	 * @return
 	 * @throws AdminAssignedException
 	 * @throws AttendeeAlreadyRegisteredException
-	 * @throws UserNotAvailableException
+	 * @throws UserNotFoundException
 	 * @throws PresentAsOtherUserTypeException
 	 */
 	public Boolean addAttendees(Integer sessionId, Set<String> attendeesEmail)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException;
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,PresentAsSameUserTypeException;
+			
 
 	public Boolean assignAdmin(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException;
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,
+			 AdminAssignedException, PresentAsSameUserTypeException;
 
 	public Boolean replaceAdmin(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException;
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException;
 
 	public Boolean addAttendee(Integer sessionId, String email)
-			throws SessionNotAvailableException,
-			PresentAsOtherUserTypeException, UserNotAvailableException,
-			AttendeeAlreadyRegisteredException, AdminAssignedException;
+			throws SessionNotFoundException,
+			PresentAsOtherUserTypeException, UserNotFoundException,
+			AdminAssignedException, PresentAsSameUserTypeException;
 
-	public Boolean removeAttendee(Integer sessionId, Integer attendeeId)
-			throws SessionNotAvailableException, AttendeeNotFoundException;
+	public Boolean removeAttendee(Integer sessionId, String email)
+			throws SessionNotFoundException, UserNotFoundException;
 
 	/**
 	 * The service adds a resource to the resource pool belonging to an existing
@@ -113,9 +116,10 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @param resource
 	 * @return
+	 * @throws DuplicateResourceException 
 	 */
 	public Integer addResource(Integer sessionId, String resourceName,
-			String url) throws SessionNotAvailableException;
+			String url) throws SessionNotFoundException, DuplicateResourceException;
 
 	/**
 	 * The service removes a resource to the resource pool belonging to an
@@ -124,11 +128,11 @@ public interface EasyShareServices {
 	 * @param sessionId
 	 * @param resourceId
 	 * @return
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 * @throws ResourceNotFoundException
 	 */
 	public Boolean removeResource(Integer sessionId, Integer resourceId)
-			throws SessionNotAvailableException, ResourceNotFoundException;
+			throws SessionNotFoundException, ResourceNotFoundException;
 
 	/**
 	 * The service adds a message to an existing session.
@@ -137,8 +141,8 @@ public interface EasyShareServices {
 	 * @param message
 	 * @return
 	 */
-	public Integer addMessage(Integer sessionId, String subject, String text)
-			throws SessionNotAvailableException;
+	public Integer addMessage(Integer sessionId, String subject, String text,String date,String post_time,String post_by)
+			throws SessionNotFoundException;
 
 	/**
 	 * The service gets the details of an existing session.
@@ -147,7 +151,7 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public Session getSession(Integer sessionId)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	/**
 	 * The service gets the users of particular type belonging to an existing
@@ -155,10 +159,10 @@ public interface EasyShareServices {
 	 * 
 	 * @param sessionId
 	 * @return
-	 * @throws SessionNotAvailableException
+	 * @throws SessionNotFoundException
 	 */
 	public Set<User> getUsers(Integer sessionId, UserType userType)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	/**
 	 * The services gets all the resources associated with an existing session.
@@ -167,7 +171,7 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public Set<Resource> getResources(Integer sessionId)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	/**
 	 * The services gets all the messages associated with an existing session.
@@ -176,7 +180,7 @@ public interface EasyShareServices {
 	 * @return
 	 */
 	public List<Message> getMessages(Integer sessionId)
-			throws SessionNotAvailableException;
+			throws SessionNotFoundException;
 
 	/**
 	 * The service gets the User owning the user id. Only used for Admin or
@@ -184,10 +188,10 @@ public interface EasyShareServices {
 	 * 
 	 * @param userId
 	 * @return
-	 * @throws UserNotAvailableException
+	 * @throws UserNotFoundException
 	 */
 	public User getUser(String email, UserType userType)
-			throws UserNotAvailableException;
+			throws UserNotFoundException;
 
 	/**
 	 * The service returns all the sessions related to the user.
@@ -198,6 +202,6 @@ public interface EasyShareServices {
 
 	public Map<UserType, Set<Session>> getMySessions(String email);
 
-	public Set<String> getAllUsersLight(Integer sessionId)
-			throws SessionNotAvailableException;
+	public Set<String> getAllUsersLight(Integer sessionId,UserType userType)
+			throws SessionNotFoundException;
 }

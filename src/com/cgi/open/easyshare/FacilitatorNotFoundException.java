@@ -1,6 +1,6 @@
 package com.cgi.open.easyshare;
 
-public class FacilitatorNotFoundException extends Exception{
+public class FacilitatorNotFoundException extends UserNotFoundException{
 	public FacilitatorNotFoundException() {
 		// TODO Auto-generated constructor stub
 	}

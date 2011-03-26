@@ -38,6 +38,10 @@ public class Message
 	 */
 	
 	private Set<Resource> resources;
+	private String postDate;
+	private String postTime;
+	private String postBy;
+	
 	
 	public Message() {
 		resources=new HashSet<Resource>();
@@ -102,6 +106,27 @@ public class Message
 		return resources;
 	}
 	
+	public String getPostDate() {
+		return postDate;
+	}
+	public void setPostDate(String postDate) {
+		this.postDate = postDate;
+	}
+	public String getPostTime() {
+		return postTime;
+	}
+	public void setPostTime(String postTime) {
+		this.postTime = postTime;
+	}
+	public String getPostBy() {
+		return postBy;
+	}
+	public void setPostBy(String postBy) {
+		this.postBy = postBy;
+	}
+	public void setResources(Set<Resource> resources) {
+		this.resources = resources;
+	}
 	/**
 	 * adds Resource to the set of resources specific to the message.
 	 *
