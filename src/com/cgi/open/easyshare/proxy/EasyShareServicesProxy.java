@@ -231,15 +231,6 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		return (persistent.removeAttendee(sessionId, email));
 	}
 
-	public Boolean replaceAdmin(Integer sessionId, String email)
-			throws SessionNotFoundException,
-			PresentAsOtherUserTypeException, UserNotFoundException {
-
-		User user = persistent.getUser(email, UserType.ADMIN);
-		return (persistent.replaceAdmin(sessionId, user));
-
-	}
-
 	public Set<Appointment> saveAppointments(Integer sessionId,
 			Set<Appointment> appointments) {
 		return null;

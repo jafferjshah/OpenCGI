@@ -452,15 +452,6 @@ public class PersistenceServicesJavaProxy implements PersistenceServices {
 				userEmailId)));
 	}
 
-	public Boolean replaceAdmin(Integer sessionId, User user)
-			throws SessionNotFoundException,
-			PresentAsOtherUserTypeException {
-		Session thisSession = getSession(sessionId);
-		user.setUserType(UserType.ADMIN);
-		thisSession.setAdmin(user);
-		return Boolean.TRUE;
-	}
-
 	public Boolean removeResource(Integer sessionId, Integer resourceId)
 			throws SessionNotFoundException, ResourceNotFoundException {
 

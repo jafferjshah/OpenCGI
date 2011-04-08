@@ -994,35 +994,6 @@ public class PersistenceServicesMySqlProxy implements PersistenceServices {
 		return isRemoved;
 	}
 
-	public Boolean replaceAdmin(Integer sessionId, User user)
-			throws SessionNotFoundException, PresentAsOtherUserTypeException {
-		// Session thisSession = getSession(sessionId);
-		Connection conn = null;
-		int r;
-		PreparedStatement pstmt = null;
-		Boolean isReplaced=null;
-		try {
-			conn = Utilities.getConnection();
-			pstmt = (PreparedStatement) conn.prepareStatement(QUERY_CONSTANTS.REPLACE_ADMIN.getQuery());
-			pstmt.setInt(1,user.getEmpid());
-			pstmt.setString(2,user.getName());
-			pstmt.setString(3,user.getEmail());
-			pstmt.setInt(4, sessionId);
-			r=pstmt.executeUpdate();
-			if (r == 0) {
-				isReplaced=Boolean.FALSE;
-			} else {
-				isReplaced=Boolean.TRUE;
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-			isReplaced=Boolean.FALSE;
-		} finally {
-			Utilities.closeResources(conn,pstmt, null);
-		}
-		return isReplaced;
-	}
-
 	public Boolean removeResource(Integer sessionId, Integer resourceId)
 			throws SessionNotFoundException, ResourceNotFoundException {
 		Connection conn = null;
