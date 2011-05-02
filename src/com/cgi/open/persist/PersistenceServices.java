@@ -90,10 +90,6 @@ public interface PersistenceServices {
 	public Boolean promoteUser(String email, UserType userType)
 			throws UserNotFoundException, InvalidPromotionException;
 
-	public Boolean replaceAdmin(Integer sessionId, User user)
-			throws SessionNotFoundException,
-			PresentAsOtherUserTypeException;
-
 	public Boolean removeFacilitator(Integer sessionId, String userEmailId)
 			throws SessionNotFoundException, FacilitatorNotFoundException;
 

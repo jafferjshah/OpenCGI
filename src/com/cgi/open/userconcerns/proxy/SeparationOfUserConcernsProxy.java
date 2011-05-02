@@ -48,7 +48,7 @@ public class SeparationOfUserConcernsProxy implements SeparationOfUserConcerns {
 						validUserType = Boolean.FALSE;
 					}
 				}
-				if (uType.equals(UserType.ATTENDEE)
+				else if (uType.equals(UserType.ATTENDEE)
 						|| uType.equals(UserType.ALL)) {
 					validUserType = Boolean.TRUE;
 					userType=uType;

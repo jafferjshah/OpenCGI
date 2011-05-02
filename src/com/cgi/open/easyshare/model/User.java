@@ -60,7 +60,6 @@ public class User {
 		}
 		User userObj = (User) obj;
 		// System.out.println(this + " AND " + userObj + " equals called");
-		return (this.getEmail().equals(userObj.getEmail()))
-				&& (this.getUserType().equals(userObj.getUserType()));
+		return (this.getEmail().equals(userObj.getEmail()));
 	}
 }

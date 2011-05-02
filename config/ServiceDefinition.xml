@@ -1,0 +1,11 @@
+<set>
+  <Service>
+    <serviceName>createSession</serviceName>
+    <arguments>
+      <Argument>
+        <argName>sessionName</argName>
+        <argClass>java.lang.String</argClass>
+      </Argument>
+    </arguments>
+  </Service>
+</set>

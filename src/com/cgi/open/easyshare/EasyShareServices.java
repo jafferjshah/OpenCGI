@@ -52,7 +52,7 @@ public interface EasyShareServices {
 	 * @throws DuplicateAppointmentException 
 	 */
 	public Integer addAppointment(Integer sessionId, String date,
-			String fromDate, String toDate,String location) throws SessionNotFoundException, DuplicateAppointmentException;
+			String fromTime, String toTime,String location) throws SessionNotFoundException, DuplicateAppointmentException;
 
 	public boolean removeAppointment(Integer sessionId, Integer appointmentId)
 			throws SessionNotFoundException,
@@ -97,14 +97,10 @@ public interface EasyShareServices {
 			PresentAsOtherUserTypeException, UserNotFoundException,
 			 AdminAssignedException, PresentAsSameUserTypeException;
 
-	public Boolean replaceAdmin(Integer sessionId, String email)
-			throws SessionNotFoundException,
-			PresentAsOtherUserTypeException, UserNotFoundException;
-
 	public Boolean addAttendee(Integer sessionId, String email)
 			throws SessionNotFoundException,
 			PresentAsOtherUserTypeException, UserNotFoundException,
-			AdminAssignedException, PresentAsSameUserTypeException;
+			PresentAsSameUserTypeException;
 
 	public Boolean removeAttendee(Integer sessionId, String email)
 			throws SessionNotFoundException, UserNotFoundException;

@@ -64,6 +64,7 @@ public class TestMain {
 			DuplicateResourceException, InvalidPromotionException {
 		jafferTest();
 		//DBTest();
+		
 	}
 
 	public static void DBTest() throws AppointmentNotFoundException,
@@ -269,42 +270,42 @@ public class TestMain {
 		sd13.setEligUserTypes(elig13);
 		sd13.setSessionRelationExists(Boolean.FALSE);
 		// INVOCATIONS
-		if (sp.isServReqValid(sd, "anupama.charles", null)) {
-			sessionId = easy.createSession("Core java","basics of java");
-			easy.assignAdmin(sessionId, "anupama.charles");
-			// easy.assignAdmin(sessionId, "anupama.charles");
-
-		}
-		if (sp.isServReqValid(sd, "surabhi", null)) {
-			sessionId2 = easy.createSession("Advanced Hibernate","complicated");
-			easy.assignAdmin(sessionId2, "surabhi");
-
-		}
-		if (sp.isServReqValid(sd1, "anupama.charles", sessionId)) {
-
-			easy.addFacilitator(sessionId, "jaffer.shah");
-			easy.addFacilitator(sessionId, "nishi.kanth");
-			//easy.addFacilitator(sessionId, "jaffer.shah");
-		}
-
-		if (sp.isServReqValid(sd1, "surabhi", sessionId2)) {
-			easy.addFacilitator(sessionId2, "jaffer.shah");
-			// easy.addFacilitator(sessionId2, "jaffer.shah");
-		}
-
-		if (sp.isServReqValid(sd6, "anupama.charles", sessionId)) {
-
-			easy.addAppointment(sessionId, "17/01/2011", "1500", "1800","Ecity");
-			easy.addAppointment(sessionId, "18/01/2011", "1500", "1800","Ecity");
-			//easy.addAppointment(sessionId, "17/01/2011","1500","1800");
-		}
-		if (sp.isServReqValid(sd8, "anupama.charles", sessionId)) {
-
-			easy.addAttendee(sessionId, "sanjana.bayya");
-			easy.addAttendee(sessionId, "safiya.fathima");
-			easy.addAttendee(sessionId, "shamim.aziz");
-			//easy.addAttendee(sessionId, "sanjana.bayya");
-		}
+//		if (sp.isServReqValid(sd, "anupama.charles", null)) {
+//			sessionId = easy.createSession("Core java","basics of java");
+//			easy.assignAdmin(sessionId, "anupama.charles");
+//			// easy.assignAdmin(sessionId, "anupama.charles");
+//
+//		}
+//		if (sp.isServReqValid(sd, "surabhi", null)) {
+//			sessionId2 = easy.createSession("Advanced Hibernate","complicated");
+//			easy.assignAdmin(sessionId2, "surabhi");
+//
+//		}
+//		if (sp.isServReqValid(sd1, "anupama.charles", sessionId)) {
+//
+//			easy.addFacilitator(sessionId, "jaffer.shah");
+//			easy.addFacilitator(sessionId, "nishi.kanth");
+//			//easy.addFacilitator(sessionId, "jaffer.shah");
+//		}
+//
+//		if (sp.isServReqValid(sd1, "surabhi", sessionId2)) {
+//			easy.addFacilitator(sessionId2, "jaffer.shah");
+//			// easy.addFacilitator(sessionId2, "jaffer.shah");
+//		}
+//
+//		if (sp.isServReqValid(sd6, "anupama.charles", sessionId)) {
+//
+//			easy.addAppointment(sessionId, "17/01/2011", "1500", "1800","Ecity");
+//			easy.addAppointment(sessionId, "18/01/2011", "1500", "1800","Ecity");
+//			//easy.addAppointment(sessionId, "17/01/2011","1500","1800");
+//		}
+//		if (sp.isServReqValid(sd8, "anupama.charles", sessionId)) {
+//
+//			easy.addAttendee(sessionId, "sanjana.bayya");
+//			easy.addAttendee(sessionId, "safiya.fathima");
+//			easy.addAttendee(sessionId, "shamim.aziz");
+//			//easy.addAttendee(sessionId, "sanjana.bayya");
+//		}
 
 		if (sp.isServReqValid(sd2, "jaffer.shah", sessionId)) {
 
@@ -313,57 +314,51 @@ public class TestMain {
 			//easy.addResource(sessionId, "resourceName1", "url1");
 		}
 
-		if (sp.isServReqValid(sd3, "jaffer.shah", sessionId)) {
-			easy.addMessage(sessionId, "subject1", "text1","17/01/2011","1830","jaffer");
-		}
-
-		if (sp.isServReqValid(sd4, "shamim.aziz", sessionId)) {
-
-			System.out.println("Messages:" + easy.getMessages(sessionId));
-		}
-
-		if (sp.isServReqValid(sd5, "jaffer.shah", sessionId)) {
-
-			easy.removeResource(sessionId, 1);
-			//easy.removeResource(sessionId, 1);
-		}
-
-		 if(sp.isServReqValid(sd7, "anupama.charles", sessionId))
-		 {
-					
-		 easy.replaceAdmin(sessionId, "surabhi");
-		 }
-
-		if (sp.isServReqValid(sd9, "anupama.charles", sessionId)) {
-
-			//easy.removeAttendee(sessionId, "sanjana.bayya");
-		}
-
-		if (sp.isServReqValid(sd10, "anupama.charles", sessionId)) {
-
-			//easy.removeFacilitator(sessionId, "nishi.kanth");
-		}
-
-		if (sp.isServReqValid(sd11, "anupama.charles", sessionId)) {
-
-			//easy.removeAppointment(sessionId, 2);
-			// easy.removeAppointment(sessionId,2);
-		}
-		if (sp.isServReqValid(sd12, "jaffer.shah", sessionId)) {
-
-			sessions = easy.getMySessions("jaffer.shah");
-		}
-
-		if (sp.isServReqValid(sd13, "jaffer.shah", sessionId)) {
-
-			Set<Resource> resources = easy.getResources(sessionId);
-			System.out.println("Resources:" + resources);
-		}
-
-		Session session = easy.getSession(sessionId);
-		Session session2 = easy.getSession(sessionId2);
-		System.out.println(session);
-		System.out.println(session2);
-		System.out.println("my sessions:" + sessions);
+//		if (sp.isServReqValid(sd3, "jaffer.shah", sessionId)) {
+//			easy.addMessage(sessionId, "subject1", "text1","17/01/2011","1830","jaffer");
+//		}
+//
+//		if (sp.isServReqValid(sd4, "shamim.aziz", sessionId)) {
+//
+//			System.out.println("Messages:" + easy.getMessages(sessionId));
+//		}
+//
+//		if (sp.isServReqValid(sd5, "jaffer.shah", sessionId)) {
+//
+//			easy.removeResource(sessionId, 1);
+//			//easy.removeResource(sessionId, 1);
+//		}
+//
+//		if (sp.isServReqValid(sd9, "anupama.charles", sessionId)) {
+//
+//			//easy.removeAttendee(sessionId, "sanjana.bayya");
+//		}
+//
+//		if (sp.isServReqValid(sd10, "anupama.charles", sessionId)) {
+//
+//			//easy.removeFacilitator(sessionId, "nishi.kanth");
+//		}
+//
+//		if (sp.isServReqValid(sd11, "anupama.charles", sessionId)) {
+//
+//			//easy.removeAppointment(sessionId, 2);
+//			// easy.removeAppointment(sessionId,2);
+//		}
+//		if (sp.isServReqValid(sd12, "jaffer.shah", sessionId)) {
+//
+//			sessions = easy.getMySessions("jaffer.shah");
+//		}
+//
+//		if (sp.isServReqValid(sd13, "jaffer.shah", sessionId)) {
+//
+//			Set<Resource> resources = easy.getResources(sessionId);
+//			System.out.println("Resources:" + resources);
+//		}
+//
+//		Session session = easy.getSession(sessionId);
+//		Session session2 = easy.getSession(sessionId2);
+//		System.out.println(session);
+//		System.out.println(session2);
+//		System.out.println("my sessions:" + sessions);
 	}
 }
