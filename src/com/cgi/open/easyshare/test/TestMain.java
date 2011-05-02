@@ -31,8 +31,6 @@ import com.cgi.open.external.UserIntegration;
 import com.cgi.open.persist.QUERY_CONSTANTS;
 import com.cgi.open.userconcerns.SeparationOfUserConcerns;
 import com.cgi.open.userconcerns.model.ServiceDef;
-import com.mysql.jdbc.PreparedStatement;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

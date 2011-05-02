@@ -31,7 +31,7 @@ import com.cgi.open.external.UserEntity;
 import com.cgi.open.external.UserIntegration;
 import com.cgi.open.persist.PersistenceServices;
 import com.cgi.open.persist.QUERY_CONSTANTS;
-import com.mysql.jdbc.PreparedStatement;
+import java.sql.PreparedStatement;
 
 public class PersistenceServicesMySqlProxy implements PersistenceServices {
 
@@ -1106,7 +1106,6 @@ public class PersistenceServicesMySqlProxy implements PersistenceServices {
 		return userIds;
 	}
 
-	@Override
 	public Set<Session> getSessionsStore()  {
 		Connection conn = null;
 		ResultSet rs = null;
