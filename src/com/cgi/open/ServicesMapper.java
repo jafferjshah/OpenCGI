@@ -9,7 +9,6 @@ import com.cgi.open.persist.proxy.PersistenceServicesJavaProxy;
 import com.cgi.open.persist.proxy.PersistenceServicesMySqlProxy;
 import com.cgi.open.userconcerns.SeparationOfUserConcerns;
 import com.cgi.open.userconcerns.proxy.SeparationOfUserConcernsProxy;
-import com.cgi.open.userconcerns.proxy.SeparationOfUserConcernsProxy2;
 
 public class ServicesMapper {
 	public static EasyShareServices getEasyShareServicesProxyInstance() {
@@ -19,7 +18,7 @@ public class ServicesMapper {
 		return new PersistenceServicesMySqlProxy();
 	}
 	public static SeparationOfUserConcerns getSeparationOfUserConcernsProxyInstance() {
-		return new SeparationOfUserConcernsProxy2();
+		return new SeparationOfUserConcernsProxy();
 	}
 	public static UserIntegration getUserIntegrationProxyInstance() {
 		return new UserIntegrationJavaProxy();
