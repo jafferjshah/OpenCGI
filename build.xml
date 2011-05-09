@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<project name="EasyShare" default="deploy" basedir=".">
+	<property file="build.properties"/>
+	<target name="clean">
+		<delete dir="${dist.home}"/>
+		<delete dir="${build.home}"/>
+	</target>
+	<target name="init" depends="clean">
+		
+		<mkdir dir="${build.home}" />
+
+	</target>
+	<target name="compile" depends="init">
+		<mkdir dir="${build.home}/WEB-INF/classes" />
+		<javac srcdir="${source.home}"
+				destdir="${build.home}/WEB-INF/classes"
+				debug="${compile.debug}"
+				deprecation="${compile.deprecation}"
+				optimize="${compile.optimize}"
+			     source="1.6" target="1.6">
+			<classpath>
+				<path>
+			    	<fileset dir="${lib.external}" />
+			    </path>
+			</classpath>
+		</javac>
+	</target>
+	<target name="build" depends="compile">
+		<copy todir="${build.home}">
+			<fileset dir="${webapp.home}" excludes="CVS,**/*.class" />
+		</copy>
+		<copy todir="${build.home}/WEB-INF/classes">
+			<fileset dir="${source.home}" excludes="CVS,**/*.java" />
+		</copy>
+		<copy todir="${build.home}/WEB-INF/lib">
+			<fileset dir="${lib.external}" />
+		</copy>
+	</target>
+	<target name="archive" depends="build">
+		<mkdir     dir="${dist.home}" />
+	    <jar jarfile="${dist.home}/${app.name}.war"
+				basedir="${build.home}" />
+
+	</target>	
+	<target name="deploy" depends="archive">
+		<copy todir="C:\INSTALLABLES\apache-tomcat-7.0.2\webapps">
+			<fileset dir="${dist.home}">
+				<filename name="${app.name}.war"/>
+			</fileset>
+		</copy>
+	</target>	
+</project>
+
