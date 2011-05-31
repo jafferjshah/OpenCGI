@@ -1,18 +1,35 @@
 package com.cgi.open.easyshare.web;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class ServiceResponse {
+	public ServiceResponse(){
+		this.request=new HashMap<REQUEST_PARAMETERS,String[]>();
+			}
+	public void initServiceResponse(MyHttpServletRequest request,String servicePath){
+		this.service = new ServicePath(servicePath,request.getServletPath());
+		this.request=request.getParameterMap();
+	}
+		
 	public ServicePath getService() {
 		return service;
 	}
 	public void setService(ServicePath service) {
 		this.service = service;
 	}
-	public Set<ParamValue> getRequest() {
+	
+	public Map<REQUEST_PARAMETERS, String[]> getRequest() {
 		return request;
 	}
-	public void setRequest(Set<ParamValue> request) {
+	public void setRequest(Map<REQUEST_PARAMETERS, String[]> request) {
 		this.request = request;
 	}
 	public String getCode() {
@@ -40,7 +57,7 @@ public class ServiceResponse {
 		this.next = next;
 	}
 	private ServicePath service;
-	private Set<ParamValue> request;
+	private Map<REQUEST_PARAMETERS,String[]> request;
 	private String code;
 	private String message;
 	private Object data;
