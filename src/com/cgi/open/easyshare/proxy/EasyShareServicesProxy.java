@@ -216,7 +216,7 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Boolean removeFacilitator(Integer sessionId, String email)
-			throws SessionNotFoundException, UserNotFoundException {
+			throws SessionNotFoundException, FacilitatorNotFoundException {
 
 		return (persistent.removeFacilitator(sessionId, email));
 	}
@@ -227,14 +227,8 @@ public class EasyShareServicesProxy implements EasyShareServices {
 	}
 
 	public Boolean removeAttendee(Integer sessionId, String email)
-			throws SessionNotFoundException, UserNotFoundException {
+			throws SessionNotFoundException, AttendeeNotFoundException {
 		return (persistent.removeAttendee(sessionId, email));
-	}
-
-	public Set<Appointment> saveAppointments(Integer sessionId,
-			Set<Appointment> appointments) {
-		return null;
-
 	}
 
 	/**
@@ -247,14 +241,14 @@ public class EasyShareServicesProxy implements EasyShareServices {
 		Set<Session> facilitatorSessions = new HashSet<Session>();
 		Set<Session> attendeeSessions = new HashSet<Session>();
 
-		if (persistent.checkForDuplicacy(email, UserType.ADMIN)) {
+		
 			for (Session thisSession : getAllSessions()) {
-				if (thisSession.getAdmin().getEmail().equals(email)) {
+				if (thisSession.getAdmin()!=null&&thisSession.getAdmin().getEmail().equals(email)) {
 					adminSessions.add(thisSession);
 				}
 			}
-		}
-		if (persistent.checkForDuplicacy(email, UserType.FACILITATOR)) {
+		
+		
 			for (Session thisSession : getAllSessions()) {
 				for (User thisFacilitator : thisSession.getFacilitators()) {
 					if (thisFacilitator.getEmail().equals(email)) {
@@ -263,15 +257,15 @@ public class EasyShareServicesProxy implements EasyShareServices {
 				}
 			}
 
-		}
-		if (persistent.checkForDuplicacy(email, UserType.ATTENDEE)) {
+		
+		
 			for (Session thisSession : getAllSessions()) {
 				for (User thisAttendee : thisSession.getAttendees()) {
 					if (thisAttendee.getEmail().equals(email)) {
 						attendeeSessions.add(thisSession);
 					}
 				}
-			}
+			
 		}
 
 		mySessions.put(UserType.ADMIN, adminSessions);

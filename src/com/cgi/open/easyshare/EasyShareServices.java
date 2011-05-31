@@ -74,7 +74,7 @@ public interface EasyShareServices {
 	 * @throws UserNotFoundException 
 	 */
 	public Boolean removeFacilitator(Integer sessionId,String email )
-			throws SessionNotFoundException, UserNotFoundException;
+			throws SessionNotFoundException, FacilitatorNotFoundException;
 
 	/**
 	 * The service adds a set of Users as Attendees to an existing session.
@@ -103,7 +103,7 @@ public interface EasyShareServices {
 			PresentAsSameUserTypeException;
 
 	public Boolean removeAttendee(Integer sessionId, String email)
-			throws SessionNotFoundException, UserNotFoundException;
+			throws SessionNotFoundException, AttendeeNotFoundException;
 
 	/**
 	 * The service adds a resource to the resource pool belonging to an existing

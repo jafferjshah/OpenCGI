@@ -44,7 +44,8 @@ public class GetMySessionsTestCase extends TestCase{
 		Map<UserType, Set<Session>> sessions = null;
 		try{
 		if (sp.isServReqValid(sd, "jaffer.shah", null)) {
-			sessions = easy.getMySessions("jaffer.shah");
+			sessions = easy.getMySessions(email);
+			System.out.println(sessions);
 			assertTrue("my sessions retrieved",true);
 		}
 		else{

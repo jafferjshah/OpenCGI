@@ -2,6 +2,7 @@ package com.cgi.open.Utilities;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,13 +11,17 @@ import java.util.List;
 
 public class Utilities {
 	public static void closeResources(Connection conn, 
-			Statement stmt, ResultSet rs) throws NullPointerException {
+			PreparedStatement pstmt, ResultSet rs) throws NullPointerException {
 		try  {
 			if(rs!=null){
 			rs.close();
 			}
-			stmt.close();
+			if(pstmt!=null){
+			pstmt.close();
+			}
+			if(conn!=null){
 			conn.close();
+			}
 			System.out.println("Resources Closed!");
 		}
 		catch(SQLException ex) {
