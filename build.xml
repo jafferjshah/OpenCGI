@@ -43,7 +43,7 @@
 
 	</target>	
 	<target name="deploy" depends="archive">
-		<copy todir="C:\INSTALLABLES\apache-tomcat-7.0.2\webapps">
+		<copy todir="G:\program files\apache-tomcat-6.0.32\webapps">
 			<fileset dir="${dist.home}">
 				<filename name="${app.name}.war"/>
 			</fileset>
