@@ -31,7 +31,7 @@ public class GetAllSessionsTestCase extends TestCase{
 		 sp= ServicesMapper
 			.getSeparationOfUserConcernsProxyInstance();
 		sd= new ServiceDef();
-		sd.setServiceName("createSession");
+		sd.setServiceName("getAllSessions");
 		Set<String> elig = new HashSet<String>();
 		elig.add("ALL");
 		sd.setEligUserTypes(elig);

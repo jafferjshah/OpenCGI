@@ -16,5 +16,12 @@ public class RenderResponse {
 		pw.println(x.toXML(sr));
 		pw.close();
 	}
+	
+	public void render(MyHttpServletResponse myResponse) throws IOException{
+		XStream x = new XStream(new DomDriver());
+		PrintWriter pw = myResponse.getWriter();
+		pw.println(x.toXML(myResponse.getServiceResponse()));
+		pw.close();
+	}
 
 }

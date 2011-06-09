@@ -73,8 +73,10 @@ public class CreateSession extends HttpServlet {
 			sr.setCode("FAILURE");
 			sr.setMessage(e.getMessage());
 		}
+		MyHttpServletResponse myResponse=new MyHttpServletResponse(response);
+		myResponse.setServiceResponse(sr);
 		RenderResponse r=new RenderResponse();
-		r.render(response, sr);
+		r.render(myResponse);
 	}
 
 }
