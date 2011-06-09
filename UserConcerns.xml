@@ -6,15 +6,40 @@
     </eligUserTypes>
     <sessionRelationExists>false</sessionRelationExists>
   </ServiceDefinition>
+  
   <ServiceDefinition>
-    <serviceName>getMySessions</serviceName>
+    <serviceName>addAppointment</serviceName>
     <eligUserTypes>
       <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>addAttendee</serviceName>
+    <eligUserTypes>
+      <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>addFacilitator</serviceName>
+    <eligUserTypes>
+      <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>addMessage</serviceName>
+    <eligUserTypes>
       <string>FACILITATOR</string>
       <string>ATTENDEE</string>
     </eligUserTypes>
     <sessionRelationExists>true</sessionRelationExists>
   </ServiceDefinition>
+  
   <ServiceDefinition>
     <serviceName>addResource</serviceName>
     <eligUserTypes>
@@ -22,4 +47,81 @@
     </eligUserTypes>
     <sessionRelationExists>true</sessionRelationExists>
   </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>getMySessions</serviceName>
+    <eligUserTypes>
+      <string>ALL</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>getAllSessions</serviceName>
+    <eligUserTypes>
+      <string>ALL</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>getMessages</serviceName>
+    <eligUserTypes>
+      <string>ALL</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>getResources</serviceName>
+    <eligUserTypes>
+      <string>FACILITATOR</string>
+      <string>ATTENDEE</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>getUsers</serviceName>
+    <eligUserTypes>
+      <string>FACILITATOR</string>
+      <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>removeAppointment</serviceName>
+    <eligUserTypes>
+      <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>removeAttendee</serviceName>
+    <eligUserTypes>
+      <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>removeFacilitator</serviceName>
+    <eligUserTypes>
+      <string>ADMIN</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  <ServiceDefinition>
+    <serviceName>removeResource</serviceName>
+    <eligUserTypes>
+      <string>FACILITATOR</string>
+    </eligUserTypes>
+    <sessionRelationExists>true</sessionRelationExists>
+  </ServiceDefinition>
+  
+  
+  
 </ServiceDefinitionGroup>
