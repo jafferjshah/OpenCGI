@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>ProEasy</display-name>
+  <filter>
+  	<description>
+  	</description>
+  	<display-name>UserAccessFilter</display-name>
+  	<filter-name>UserAccessFilter</filter-name>
+  	<filter-class>com.cgi.open.easyshare.web.UserAccessFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>UserAccessFilter</filter-name>
+  	<url-pattern>/createSession</url-pattern>
+  	<url-pattern>/addAppointment</url-pattern>
+  	<url-pattern>/addAttendee</url-pattern>
+  	<url-pattern>/addFacilitator</url-pattern>
+  	<url-pattern>/addMessage</url-pattern>
+  	<url-pattern>/addResource</url-pattern>
+  	<url-pattern>/assignAdmin</url-pattern>
+  	<url-pattern>/removeAppointment</url-pattern>
+  	<url-pattern>/removeAttendee</url-pattern>
+  	<url-pattern>/removeFacilitator</url-pattern>
+  	<url-pattern>/removeResource</url-pattern>
+  	<url-pattern>/getAllSessions</url-pattern>
+  	<url-pattern>/getMessages</url-pattern>
+  	<url-pattern>/getResources</url-pattern>
+  	<url-pattern>/getSession</url-pattern>
+  	<url-pattern>/getUser</url-pattern>
+  	<url-pattern>/getUsers</url-pattern>
+  	<url-pattern>/getMySessions</url-pattern>
+  	<url-pattern>/getAllUsersLight</url-pattern>
+  </filter-mapping>
   
   <servlet>
     <servlet-name>hello</servlet-name>
@@ -166,79 +195,79 @@
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>CreateSession</servlet-name>
-  	<url-pattern>/CreateSession</url-pattern>
+  	<url-pattern>/createSession</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>AddAppointment</servlet-name>
-  	<url-pattern>/AddAppointment</url-pattern>
+  	<url-pattern>/addAppointment</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>AssignAdmin</servlet-name>
-  	<url-pattern>/AssignAdmin</url-pattern>
+  	<url-pattern>/assignAdmin</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>AddAttendee</servlet-name>
-  	<url-pattern>/AddAttendee</url-pattern>
+  	<url-pattern>/addAttendee</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>AddFacilitator</servlet-name>
-  	<url-pattern>/AddFacilitator</url-pattern>
+  	<url-pattern>/addFacilitator</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>AddMessage</servlet-name>
-  	<url-pattern>/AddMessage</url-pattern>
+  	<url-pattern>/addMessage</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>RemoveAppointment</servlet-name>
-  	<url-pattern>/RemoveAppointment</url-pattern>
+  	<url-pattern>/removeAppointment</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>RemoveAttendee</servlet-name>
-  	<url-pattern>/RemoveAttendee</url-pattern>
+  	<url-pattern>/removeAttendee</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>DesignateUser</servlet-name>
-  	<url-pattern>/DesignateUser</url-pattern>
+  	<url-pattern>/designateUser</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>RemoveFacilitator</servlet-name>
-  	<url-pattern>/RemoveFacilitator</url-pattern>
+  	<url-pattern>/removeFacilitator</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>RemoveResource</servlet-name>
-  	<url-pattern>/RemoveResource</url-pattern>
+  	<url-pattern>/removeResource</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetAllSessions</servlet-name>
-  	<url-pattern>/GetAllSessions</url-pattern>
+  	<url-pattern>/getAllSessions</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetMessages</servlet-name>
-  	<url-pattern>/GetMessages</url-pattern>
+  	<url-pattern>/getMessages</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetResources</servlet-name>
-  	<url-pattern>/GetResources</url-pattern>
+  	<url-pattern>/getResources</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetSession</servlet-name>
-  	<url-pattern>/GetSession</url-pattern>
+  	<url-pattern>/getSession</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetUser</servlet-name>
-  	<url-pattern>/GetUser</url-pattern>
+  	<url-pattern>/getUser</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetUsers</servlet-name>
-  	<url-pattern>/GetUsers</url-pattern>
+  	<url-pattern>/getUsers</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetMySessions</servlet-name>
-  	<url-pattern>/GetMySessions</url-pattern>
+  	<url-pattern>/getMySessions</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>GetAllUsersLight</servlet-name>
-  	<url-pattern>/GetAllUsersLight</url-pattern>
+  	<url-pattern>/getAllUsersLight</url-pattern>
   </servlet-mapping>
   
   
