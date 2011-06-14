@@ -73,22 +73,23 @@ public class UserAccessFilter implements Filter {
 		service=req.getServletPath();
 		service=service.substring(1,service.length());
 		ServiceGroupDef group=loadXml();
-		//userEmail=getUser(req);
-		
+		userEmail=getUser(req);
+		userEmail=userEmail+"@cgi.com";
+		out.println(userEmail);
 			if(group!=null){
 				sd=loadServiceDef(group, service);
 				if(sd!=null){
-					//if(userEmail!=null){
-						if (sp.isServReqValid(sd, "surabhi@cgi.com", sessionId)) {
+					if(userEmail!=null){
+						if (sp.isServReqValid(sd,"surabhi@cgi.com", sessionId)) {
 							chain.doFilter(request, response);
 							out.print("hiiii");
 						}
 						else {
 							throw new InvalidServiceInvocationException();
 						}
-					//}else{
-						//out.print("User email is required");
-				//	}
+					}else{
+						out.print("User email is required");
+					}
 				}else{
 					out.print("Service not available!!!");
 				}
