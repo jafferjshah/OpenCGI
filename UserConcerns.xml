@@ -53,7 +53,7 @@
     <eligUserTypes>
       <string>ALL</string>
     </eligUserTypes>
-    <sessionRelationExists>true</sessionRelationExists>
+    <sessionRelationExists>false</sessionRelationExists>
   </ServiceDefinition>
   
   <ServiceDefinition>
@@ -61,7 +61,7 @@
     <eligUserTypes>
       <string>ALL</string>
     </eligUserTypes>
-    <sessionRelationExists>true</sessionRelationExists>
+    <sessionRelationExists>false</sessionRelationExists>
   </ServiceDefinition>
   
   <ServiceDefinition>
