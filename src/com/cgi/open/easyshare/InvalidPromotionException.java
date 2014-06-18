@@ -1,5 +1,6 @@
 package com.cgi.open.easyshare;
 
+//What an exception is this!
 public class InvalidPromotionException extends Exception{
 	public InvalidPromotionException() {
 		// TODO Auto-generated constructor stub
